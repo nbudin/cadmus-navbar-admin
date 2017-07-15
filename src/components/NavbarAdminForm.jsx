@@ -17,16 +17,28 @@ class NavbarAdminForm extends React.Component {
     isLoadingNavigationItems: PropTypes.bool,
     isLoadingPages: PropTypes.bool,
     baseUrl: PropTypes.string.isRequired,
+    error: PropTypes.string,
+    csrfToken: PropTypes.string,
   };
 
   static defaultProps = {
     isLoadingNavigationItems: false,
     isLoadingPages: false,
+    error: null,
+    csrfToken: null,
   };
 
   componentDidMount = () => {
     this.props.fetchNavigationItems();
     this.props.fetchPages();
+  }
+
+  renderError = () => {
+    if (this.props.error) {
+      return <div className="alert alert-danger">{this.props.error}</div>;
+    }
+
+    return null;
   }
 
   render = () => {
@@ -36,8 +48,11 @@ class NavbarAdminForm extends React.Component {
 
     return (
       <div>
+        {this.renderError()}
+
         <NavigationItemList
           baseUrl={this.props.baseUrl}
+          csrfToken={this.props.csrfToken}
           navigationItems={this.props.navigationItems}
         />
 
@@ -50,7 +65,7 @@ class NavbarAdminForm extends React.Component {
           </li>
         </ul>
 
-        <NavigationItemEditor baseUrl={this.props.baseUrl} />
+        <NavigationItemEditor baseUrl={this.props.baseUrl} csrfToken={this.props.csrfToken} />
       </div>
     );
   }

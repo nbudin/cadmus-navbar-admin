@@ -117,6 +117,7 @@ class NavigationItem extends React.Component {
       <div className="w-100 mt-2">
         <NavigationItemList
           baseUrl={this.props.baseUrl}
+          csrfToken={this.props.csrfToken}
           navigationItems={this.props.navigationItems}
           navigationSectionId={this.props.navigationItem.id}
         />

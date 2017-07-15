@@ -38,7 +38,7 @@ function saveUrlForNavigationItem(navigationItem, baseUrl) {
   return url;
 }
 
-function saveNavigationItem(navigationItem, url) {
+function saveNavigationItem(navigationItem, url, csrfToken) {
   let method = 'POST';
   if (navigationItem.id) {
     method = 'PATCH';
@@ -47,11 +47,29 @@ function saveNavigationItem(navigationItem, url) {
   return jsonFetch(url, {
     method,
     headers: {
-      'X-CSRF-Token': getCSRFToken(),
+      'X-CSRF-Token': csrfToken,
     },
     body: navigationItem,
     expectedStatuses: [201, 202],
   });
+}
+
+function expectResponseStatuses(statuses) {
+  return (response) => {
+    if (!statuses.includes(response.status)) {
+      return response.json().then(
+        (json) => { return new Error(json.error); }
+      ).catch(() => (
+        response.text().then(
+          (text) => { return new Error(text); }
+        )
+      )).then(
+        (error) => { throw error; }
+      );
+    }
+
+    return response;
+  }
 }
 
 export function addLink(navigationSectionId) {
@@ -101,14 +119,14 @@ export function commitEditingNavigationItemSuccess(json) {
   };
 }
 
-export function commitEditingNavigationItem(baseUrl) {
+export function commitEditingNavigationItem(baseUrl, csrfToken) {
   return (dispatch, getState) => {
     const { editingNavigationItem } = getState();
 
     const url = saveUrlForNavigationItem(editingNavigationItem, baseUrl);
 
     dispatch(commitEditingNavigationItemRequest(url));
-    saveNavigationItem(editingNavigationItem, url).then(
+    saveNavigationItem(editingNavigationItem, url, csrfToken).then(
       response => dispatch(commitEditingNavigationItemSuccess(response.body)),
     ).catch(
       error => dispatch(commitEditingNavigationItemFailure(error)),
@@ -140,23 +158,17 @@ export function deleteNavigationItemSuccess(json, navigationItem) {
   };
 }
 
-export function deleteNavigationItem(baseUrl, navigationItem) {
+export function deleteNavigationItem(baseUrl, navigationItem, csrfToken) {
   return (dispatch) => {
     const url = `${baseUrl}/${navigationItem.id}`;
     dispatch(deleteNavigationItemRequest(url, navigationItem));
     fetch(url, {
       method: 'DELETE',
       headers: {
-        'X-CSRF-Token': getCSRFToken(),
+        'X-CSRF-Token': csrfToken,
       },
       credentials: 'include',
-    }).then((response) => {
-      if (response.status !== 200) {
-        return response.text().then((text) => { throw new Error(text); });
-      }
-
-      return response;
-    }).then(
+    }).then(expectResponseStatuses([200])).then(
       response => dispatch(deleteNavigationItemSuccess(response.body, navigationItem)),
     ).catch(
       error => dispatch(deleteNavigationItemFailure(error, navigationItem)),
@@ -185,18 +197,21 @@ export function fetchNavigationItemsFailure(error) {
   };
 }
 
-export function fetchNavigationItemsSuccess(json) {
+export function fetchNavigationItemsSuccess(json, csrfToken) {
   return {
     type: FETCH_NAVIGATION_ITEMS_SUCCESS,
     json,
+    csrfToken,
   };
 }
 
 export function fetchNavigationItems(url) {
   return (dispatch) => {
     dispatch(fetchNavigationItemsRequest(url));
-    jsonFetch(url, { method: 'GET' }).then(
-      response => dispatch(fetchNavigationItemsSuccess(response.body)),
+    jsonFetch(url, { method: 'GET', expectedStatuses: [200] }).then(
+      response => dispatch(
+        fetchNavigationItemsSuccess(response.body.navigation_items, response.body.csrf_token)
+      ),
     ).catch(
       error => dispatch(fetchNavigationItemsFailure(error)),
     );
@@ -227,27 +242,11 @@ export function fetchPagesSuccess(json) {
 export function fetchPages(url) {
   return (dispatch) => {
     dispatch(fetchPagesRequest(url));
-    jsonFetch(url, { method: 'GET' }).then(
+    jsonFetch(url, { method: 'GET', expectedStatuses: [200] }).then(
       response => dispatch(fetchPagesSuccess(response.body)),
     ).catch(
       error => dispatch(fetchPagesFailure(error)),
     );
-  };
-}
-
-export function moveNavigationItem(navigationItem, targetItem) {
-  return {
-    type: MOVE_NAVIGATION_ITEM,
-    navigationItem,
-    targetItem,
-  };
-}
-
-export function moveNavigationItemIntoSection(navigationItem, targetSection) {
-  return {
-    type: MOVE_NAVIGATION_ITEM_INTO_SECTION,
-    navigationItem,
-    targetSection,
   };
 }
 
@@ -272,7 +271,7 @@ export function sortNavigationItemsSuccess(newNavigationItems) {
   };
 }
 
-export function sortNavigationItems(baseUrl, newNavigationItems) {
+export function sortNavigationItems(baseUrl, newNavigationItems, csrfToken) {
   return (dispatch) => {
     const payload = {
       navigation_items: newNavigationItems.map(navigationItem => ({
@@ -289,11 +288,11 @@ export function sortNavigationItems(baseUrl, newNavigationItems) {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRF-Token': getCSRFToken(),
+        'X-CSRF-Token': csrfToken,
       },
       body: JSON.stringify(payload),
       credentials: 'include',
-    }).then(
+    }).then(expectResponseStatuses([200])).then(
       () => dispatch(sortNavigationItemsSuccess(newNavigationItems)),
     ).catch(
       error => dispatch(sortNavigationItemsFailure(error)),

@@ -24,7 +24,11 @@ const DisclosureTriangle = ({ onClick, expanded }) => {
 
 DisclosureTriangle.propTypes = {
   onClick: PropTypes.func.isRequired,
-  expanded: PropTypes.bool.isRequired,
+  expanded: PropTypes.bool,
+};
+
+DisclosureTriangle.defaultProps = {
+  expanded: null,
 };
 
 export default DisclosureTriangle;

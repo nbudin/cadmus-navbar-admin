@@ -26,6 +26,7 @@ import {
 import NavigationItemStore from './NavigationItemStore';
 
 const initialState = {
+  csrfToken: null,
   isLoadingNavigationItems: false,
   isLoadingPages: false,
   navigationItems: new NavigationItemStore([]),
@@ -81,6 +82,7 @@ function navbarAdminApp(state = initialState, action) {
       return {
         ...state,
         isCommittingEditingNavigationItem: false,
+        error: action.error.message,
       };
     case COMMIT_EDITING_NAVIGATION_ITEM_SUCCESS:
       return {
@@ -101,6 +103,7 @@ function navbarAdminApp(state = initialState, action) {
       return {
         ...state,
         isDeletingNavigationItem: false,
+        error: action.error.message,
       };
     case DELETE_NAVIGATION_ITEM_SUCCESS:
       return {
@@ -122,13 +125,14 @@ function navbarAdminApp(state = initialState, action) {
       return {
         ...state,
         isLoadingNavigationItems: false,
-        error: action.message,
+        error: action.error.message,
       };
     case FETCH_NAVIGATION_ITEMS_SUCCESS:
       return {
         ...state,
         navigationItems: new NavigationItemStore(action.json),
         isLoadingNavigationItems: false,
+        csrfToken: action.csrfToken,
       };
     case FETCH_PAGES_REQUEST:
       return {
@@ -139,7 +143,7 @@ function navbarAdminApp(state = initialState, action) {
       return {
         ...state,
         isLoadingPages: false,
-        error: action.message,
+        error: action.error.message,
       };
     case FETCH_PAGES_SUCCESS:
       return {
@@ -174,6 +178,7 @@ function navbarAdminApp(state = initialState, action) {
       return {
         ...state,
         isSortingNavigationItems: false,
+        error: action.error.message,
       };
     case SORT_NAVIGATION_ITEMS_SUCCESS:
       return {

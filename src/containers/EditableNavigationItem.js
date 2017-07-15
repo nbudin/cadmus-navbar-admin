@@ -15,7 +15,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   onDelete: () => {
-    dispatch(deleteNavigationItem(ownProps.baseUrl, ownProps.navigationItem));
+    dispatch(deleteNavigationItem(ownProps.baseUrl, ownProps.navigationItem, ownProps.csrfToken));
   },
 
   onEdit: () => {
@@ -33,7 +33,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         1,
       );
 
-    dispatch(sortNavigationItems(ownProps.baseUrl, newNavigationItems));
+    dispatch(sortNavigationItems(ownProps.baseUrl, newNavigationItems, ownProps.csrfToken));
   },
 
   onMoveNavigationItemOnto: (movedItem, navigationItems) => {
@@ -43,7 +43,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         ownProps.navigationItem.position,
       );
 
-    dispatch(sortNavigationItems(ownProps.baseUrl, newNavigationItems));
+    dispatch(sortNavigationItems(ownProps.baseUrl, newNavigationItems, ownProps.csrfToken));
   },
 });
 
@@ -55,6 +55,11 @@ const EditableNavigationItem = connect(
 EditableNavigationItem.propTypes = {
   baseUrl: PropTypes.string.isRequired,
   navigationItem: NavigationItemPropType.isRequired,
+  csrfToken: PropTypes.string,
+};
+
+EditableNavigationItem.defaultProps = {
+  csrfToken: null,
 };
 
 export default EditableNavigationItem;
