@@ -16,7 +16,6 @@ function NavigationItemList({ baseUrl, navigationItems, navigationSectionId = nu
       key={navigationItem.id}
       navigationItem={navigationItem}
       baseUrl={baseUrl}
-      csrfToken={csrfToken}
     />
     ));
 

@@ -20,14 +20,12 @@ class NavbarAdminForm extends React.Component {
     isLoadingPages: PropTypes.bool,
     baseUrl: PropTypes.string.isRequired,
     error: PropTypes.string,
-    csrfToken: PropTypes.string,
   };
 
   static defaultProps = {
     isLoadingNavigationItems: false,
     isLoadingPages: false,
     error: null,
-    csrfToken: null,
   };
 
   componentDidMount = () => {
@@ -41,7 +39,6 @@ class NavbarAdminForm extends React.Component {
         <div style={{...style, width: `${this.wrapperDiv.offsetWidth}px` }}>
           <EditableNavigationItem
             baseUrl={this.props.baseUrl}
-            csrfToken={this.props.csrfToken}
             navigationItem={item}
           />
         </div>
@@ -70,7 +67,6 @@ class NavbarAdminForm extends React.Component {
 
         <NavigationItemList
           baseUrl={this.props.baseUrl}
-          csrfToken={this.props.csrfToken}
           navigationItems={this.props.navigationItems}
         />
 
@@ -83,7 +79,7 @@ class NavbarAdminForm extends React.Component {
           </li>
         </ul>
 
-        <NavigationItemEditor baseUrl={this.props.baseUrl} csrfToken={this.props.csrfToken} />
+        <NavigationItemEditor baseUrl={this.props.baseUrl} />
         <Preview generator={this.generatePreview} />
       </div>
     );

@@ -115,9 +115,9 @@ export function commitEditingNavigationItemSuccess(json) {
   };
 }
 
-export function commitEditingNavigationItem(baseUrl, csrfToken) {
+export function commitEditingNavigationItem(baseUrl) {
   return (dispatch, getState) => {
-    const { editingNavigationItem } = getState();
+    const { editingNavigationItem, csrfToken } = getState();
 
     const url = saveUrlForNavigationItem(editingNavigationItem, baseUrl);
 
@@ -154,9 +154,11 @@ export function deleteNavigationItemSuccess(json, navigationItem) {
   };
 }
 
-export function deleteNavigationItem(baseUrl, navigationItem, csrfToken) {
-  return (dispatch) => {
+export function deleteNavigationItem(baseUrl, navigationItem) {
+  return (dispatch, getState) => {
+    const { csrfToken } = getState();
     const url = `${baseUrl}/${navigationItem.id}`;
+
     dispatch(deleteNavigationItemRequest(url, navigationItem));
     fetch(url, {
       method: 'DELETE',
@@ -267,8 +269,9 @@ export function sortNavigationItemsSuccess(newNavigationItems) {
   };
 }
 
-export function sortNavigationItems(baseUrl, newNavigationItems, csrfToken) {
-  return (dispatch) => {
+export function sortNavigationItems(baseUrl, newNavigationItems) {
+  return (dispatch, getState) => {
+    const { csrfToken } = getState();
     const payload = {
       navigation_items: newNavigationItems.map(navigationItem => ({
         id: navigationItem.id,

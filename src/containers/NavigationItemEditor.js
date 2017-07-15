@@ -10,7 +10,7 @@ const mapStateToProps = (state, _ownProps) => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   onSave: () => {
-    dispatch(commitEditingNavigationItem(ownProps.baseUrl, ownProps.csrfToken));
+    dispatch(commitEditingNavigationItem(ownProps.baseUrl));
   },
 
   onCancel: (newTitle) => {
@@ -25,11 +25,6 @@ const NavigationItemEditor = connect(
 
 NavigationItemEditor.propTypes = {
   baseUrl: PropTypes.string.isRequired,
-  csrfToken: PropTypes.string,
-};
-
-NavigationItemEditor.defaultProps = {
-  csrfToken: null,
 };
 
 export default NavigationItemEditor;
