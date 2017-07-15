@@ -5,7 +5,7 @@ import NavigationItemEditorModal from '../components/NavigationItemEditorModal';
 
 const mapStateToProps = (state, _ownProps) => ({
   navigationItem: state.editingNavigationItem,
-  isCommittingEditingNavigationItem: state.isCommittingEditingNavigationItem,
+  isCommittingEditingNavigationItem: state.requestsInProgress.committingEditingNavigationItem,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
