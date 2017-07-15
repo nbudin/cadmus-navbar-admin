@@ -28,20 +28,33 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 
   onMoveNavigationItemInto: (movedItem, navigationItems) => {
     const newNavigationItems = navigationItems.reposition(
-        movedItem.id,
-        ownProps.navigationItem.id,
-        1,
-      );
+      movedItem.id,
+      ownProps.navigationItem.id,
+      1,
+    );
 
     dispatch(sortNavigationItems(ownProps.baseUrl, newNavigationItems, ownProps.csrfToken));
   },
 
   onMoveNavigationItemOnto: (movedItem, navigationItems) => {
-    const newNavigationItems = navigationItems.reposition(
+    const myItem = ownProps.navigationItem;
+    const sameSection = (movedItem.navigation_section_id === myItem.navigation_section_id);
+    const movingDown = (sameSection && movedItem.position < myItem.position);
+
+    let newNavigationItems;
+    if (movingDown) {
+      newNavigationItems = navigationItems.reposition(
         movedItem.id,
-        ownProps.navigationItem.navigation_section_id,
-        ownProps.navigationItem.position,
+        myItem.navigation_section_id,
+        myItem.position + 1,
       );
+    } else {
+      newNavigationItems = navigationItems.reposition(
+        movedItem.id,
+        myItem.navigation_section_id,
+        myItem.position,
+      );
+    }
 
     dispatch(sortNavigationItems(ownProps.baseUrl, newNavigationItems, ownProps.csrfToken));
   },

@@ -56,7 +56,7 @@ export default class NavigationItemStore {
 
     let insertIndex = itemsInSection.findIndex(sectionItem => sectionItem.position >= newPosition);
     if (insertIndex === -1) {
-      insertIndex = itemsInSection.length;
+      insertIndex = itemsInSection.size;
     }
 
     const newItems = itemsInSection.insert(insertIndex, { ...item, navigation_section_id: newNavigationSectionId });
