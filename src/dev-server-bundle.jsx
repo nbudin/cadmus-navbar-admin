@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import fetch from 'isomorphic-fetch';
 import CadmusNavbarAdmin from './index';
+import './styles/cadmus-navbar-admin.css';
 
 class CadmusNavbarAdminWrapper extends React.Component {
   constructor(props) {
