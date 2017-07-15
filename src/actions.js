@@ -25,10 +25,6 @@ export const SORT_NAVIGATION_ITEMS_FAILURE = 'SORT_NAVIGATION_ITEMS_FAILURE';
 export const SORT_NAVIGATION_ITEMS_SUCCESS = 'SORT_NAVIGATION_ITEMS_SUCCESS';
 export const TOGGLE_SECTION_EXPANDED = 'TOGGLE_SECTION_EXPANDED';
 
-function getCSRFToken() {
-  return document.querySelectorAll('meta[name=csrf-token]')[0].content;
-}
-
 function saveUrlForNavigationItem(navigationItem, baseUrl) {
   let url = baseUrl;
   if (navigationItem.id) {
