@@ -1,55 +1,84 @@
 const webpack = require('webpack');
 const CompressionPlugin = require('compression-webpack-plugin');
 const path = require('path');
+const { env } = require('process');
+
+function getPlugins() {
+  if (env.NODE_ENV === 'production') {
+    return [
+      new webpack.optimize.UglifyJsPlugin({
+        minimize: true,
+        sourceMap: true,
+
+        compress: {
+          warnings: false
+        },
+
+        output: {
+          comments: false
+        }
+      }),
+
+      new CompressionPlugin({
+        asset: '[path].gz[query]',
+        algorithm: 'gzip',
+        test: /\.(js|css|html|json|ico|svg|eot|otf|ttf)$/
+      })
+    ];
+  }
+
+  return [];
+}
+
+function getExternals() {
+  if (env.NODE_ENV === 'production') {
+    return {
+      "react": "React"
+    };
+  }
+
+  return {};
+}
 
 module.exports = {
+  devtool: (env.NODE_ENV === 'development' ? 'cheap-module-eval-source-map' : false),
+
   entry: {
     index: 'index',
+    'dev-server-bundle': 'dev-server-bundle',
   },
 
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'index.js'
+    filename: '[name].js'
   },
 
-  // Resolve the `./src` directory so we can avoid writing
   resolve: {
-    modules: ['node_modules', 'lib']
+    extensions: ['.js', '.jsx'],
+    modules: [path.resolve(__dirname, 'src'), 'node_modules']
   },
 
-  externals: {
-    // Use external version of React
-    "react": "React"
-  },
+  externals: getExternals(),
 
   // Instruct webpack how to handle each file type that it might encounter
   module: {
-    loaders: [
+    rules: [
+      {
+        test: /\.jsx?$/i,
+        include: [path.resolve(__dirname, 'src')],
+        loader: 'babel-loader',
+      },
       {
         test: /\.css$/i,
+        include: [path.resolve(__dirname, 'src')],
         loader: 'css-loader',
       }
     ]
   },
 
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      minimize: true,
-      sourceMap: true,
+  plugins: getPlugins(),
 
-      compress: {
-        warnings: false
-      },
-
-      output: {
-        comments: false
-      }
-    }),
-
-    new CompressionPlugin({
-      asset: '[path].gz[query]',
-      algorithm: 'gzip',
-      test: /\.(js|css|html|json|ico|svg|eot|otf|ttf)$/
-    })
-  ]
+  devServer: {
+    contentBase: path.join(__dirname, "public"),
+  }
 };

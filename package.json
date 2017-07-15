@@ -7,7 +7,7 @@
   "author": "Nat Budin <nbudin@patientslikeme.com>",
   "license": "MIT",
   "files": [
-    "dist",
+    "dist/index.*",
     "lib",
     "src"
   ],
@@ -19,6 +19,7 @@
     "prepare": "npm run build",
     "lint": "eslint --ext .js --ext .jsx src",
     "lint:fix": "eslint --ext .js --ext .jsx src --fix",
+    "start": "NODE_ENV=development webpack-dev-server",
     "webpack:analyze": "webpack --config webpack.config.js --json | webpack-bundle-size-analyzer"
   },
   "devDependencies": {
@@ -36,6 +37,7 @@
     "extract-text-webpack-plugin": "^3.0.0",
     "react": "^15.6.1",
     "react-build-dist": "^0.0.8",
+    "react-dom": "^15.6.1",
     "react-redux": "^5.0.5",
     "style-loader": "^0.18.2",
     "webpack": "^3.2.0",
