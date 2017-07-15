@@ -1,14 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import HTML5Backend from 'react-dnd-html5-backend';
+import MultiBackend, { Preview } from 'react-dnd-multi-backend';
+import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch'; // or any other pipeline
 import { DragDropContext } from 'react-dnd';
 import AddLinkButton from '../containers/AddLinkButton';
 import AddSectionButton from '../containers/AddSectionButton';
+import EditableNavigationItem from '../containers/EditableNavigationItem';
 import NavigationItemList from './NavigationItemList';
 import NavigationItemEditor from '../containers/NavigationItemEditor';
 import { NavigationItemStorePropType } from '../propTypes';
 
-@DragDropContext(HTML5Backend)
+@DragDropContext(MultiBackend(HTML5toTouch))
 class NavbarAdminForm extends React.Component {
   static propTypes = {
     fetchNavigationItems: PropTypes.func.isRequired,
@@ -33,6 +35,22 @@ class NavbarAdminForm extends React.Component {
     this.props.fetchPages();
   }
 
+  generatePreview = (type, item, style) => {
+    if (type === 'NAVIGATION_ITEM') {
+      return (
+        <div style={{...style, width: `${this.wrapperDiv.offsetWidth}px` }}>
+          <EditableNavigationItem
+            baseUrl={this.props.baseUrl}
+            csrfToken={this.props.csrfToken}
+            navigationItem={item}
+          />
+        </div>
+      );
+    }
+
+    return null;
+  }
+
   renderError = () => {
     if (this.props.error) {
       return <div className="alert alert-danger">{this.props.error}</div>;
@@ -47,7 +65,7 @@ class NavbarAdminForm extends React.Component {
     }
 
     return (
-      <div>
+      <div ref={(div) => { this.wrapperDiv = div; }}>
         {this.renderError()}
 
         <NavigationItemList
@@ -66,6 +84,7 @@ class NavbarAdminForm extends React.Component {
         </ul>
 
         <NavigationItemEditor baseUrl={this.props.baseUrl} csrfToken={this.props.csrfToken} />
+        <Preview generator={this.generatePreview} />
       </div>
     );
   }
