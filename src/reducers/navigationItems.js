@@ -24,8 +24,8 @@ export default function navigationItems(
     case SORT_NAVIGATION_ITEMS_SUCCESS:
       return currentNavigationItems.applySort(action.newNavigationItems);
     case TOGGLE_SECTION_EXPANDED:
-      return navigationItems.update(
-        action.currentNavigationItems,
+      return currentNavigationItems.update(
+        action.navigationSectionId,
         section => ({ ...section, expanded: !section.expanded }),
       );
     default:
