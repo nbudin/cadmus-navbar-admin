@@ -2,9 +2,22 @@ import { connect } from 'react-redux';
 import { fetchNavigationItems, fetchPages } from '../actions';
 import NavbarAdminForm from '../components/NavbarAdminForm';
 
-const mapStateToProps = (state, ownProps) => {
-  const { navigationItems, isLoadingNavigationItems, isLoadingPages, error, editingNavigationItem, csrfToken } = state;
-  return { navigationItems, isLoadingNavigationItems, isLoadingPages, error, editingNavigationItem, csrfToken };
+const mapStateToProps = (state) => {
+  const {
+    navigationItems,
+    isLoadingNavigationItems,
+    isLoadingPages,
+    error,
+    editingNavigationItem,
+  } = state;
+
+  return {
+    navigationItems,
+    isLoadingNavigationItems,
+    isLoadingPages,
+    error,
+    editingNavigationItem,
+  };
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => ({

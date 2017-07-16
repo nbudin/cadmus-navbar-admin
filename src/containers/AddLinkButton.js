@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { addLink } from '../actions';
 import AddButton from '../components/AddButton';
 
-const mapStateToProps = (_state, _ownProps) => ({ caption: 'Add link' });
+const mapStateToProps = () => ({ caption: 'Add link' });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   onClick: () => {

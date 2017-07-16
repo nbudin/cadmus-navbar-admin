@@ -45,7 +45,7 @@ module.exports = {
 
   entry: {
     index: 'index',
-    'dev-server-bundle': 'dev-server-bundle',
+    'dev-server-bundle': './dev-server-bundle',
   },
 
   output: {
@@ -65,7 +65,7 @@ module.exports = {
     rules: [
       {
         test: /\.jsx?$/i,
-        include: [path.resolve(__dirname, 'src')],
+        include: [path.resolve(__dirname, 'src'), path.resolve(__dirname, 'dev-server-bundle')],
         loader: 'babel-loader',
       },
       {

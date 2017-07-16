@@ -9,7 +9,7 @@ import {
 import NavigationItem from '../components/NavigationItem';
 import { NavigationItemPropType } from '../propTypes';
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   navigationItems: state.navigationItems,
 });
 

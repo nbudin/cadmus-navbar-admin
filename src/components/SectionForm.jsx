@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { enableUniqueIds } from 'react-html-id';
 import { NavigationItemPropType } from '../propTypes';
 
 class SectionForm extends React.Component {
@@ -9,8 +10,9 @@ class SectionForm extends React.Component {
     onSubmit: PropTypes.func.isRequired,
   }
 
-  titleChanged = (event) => {
-    this.props.onTitleChanged(event.target.value);
+  constructor(props) {
+    super(props);
+    enableUniqueIds(this);
   }
 
   onSubmit = (event) => {
@@ -18,14 +20,28 @@ class SectionForm extends React.Component {
     this.props.onSubmit();
   }
 
-  render = () => (
-    <form className="form" onSubmit={this.onSubmit}>
-      <div className="form-group">
-        <label>Title</label>
-        <input type="text" className="form-control" onChange={this.titleChanged} value={this.props.navigationItem.title} />
-      </div>
-    </form>
-    )
+  titleChanged = (event) => {
+    this.props.onTitleChanged(event.target.value);
+  }
+
+  render = () => {
+    const titleId = this.nextUniqueId();
+
+    return (
+      <form className="form" onSubmit={this.onSubmit}>
+        <div className="form-group">
+          <label htmlFor="titleId">Title</label>
+          <input
+            id={titleId}
+            type="text"
+            className="form-control"
+            onChange={this.titleChanged}
+            value={this.props.navigationItem.title}
+          />
+        </div>
+      </form>
+    );
+  }
 }
 
 export default SectionForm;

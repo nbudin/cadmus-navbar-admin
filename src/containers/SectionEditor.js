@@ -4,9 +4,9 @@ import { changeEditingNavigationItem } from '../actions';
 import SectionForm from '../components/SectionForm';
 import { NavigationItemPropType } from '../propTypes';
 
-const mapStateToProps = (_state, _ownProps) => ({ });
+const mapStateToProps = () => ({});
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   onTitleChanged: (newTitle) => {
     dispatch(changeEditingNavigationItem({ title: newTitle }));
   },

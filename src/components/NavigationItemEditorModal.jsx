@@ -46,7 +46,12 @@ function itemIsValid(navigationItem, navigationItemType) {
   return true;
 }
 
-const NavigationItemEditorModal = ({ navigationItem, onSave, onCancel, isCommittingEditingNavigationItem }) => {
+const NavigationItemEditorModal = ({
+  navigationItem,
+  onSave,
+  onCancel,
+  isCommittingEditingNavigationItem,
+}) => {
   let navigationItemType;
   if (navigationItem) {
     navigationItemType = itemType(navigationItem);
@@ -72,7 +77,10 @@ const NavigationItemEditorModal = ({ navigationItem, onSave, onCancel, isCommitt
           type="button"
           className="btn btn-primary"
           onClick={onSave}
-          disabled={isCommittingEditingNavigationItem || !itemIsValid(navigationItem, navigationItemType)}
+          disabled={
+            isCommittingEditingNavigationItem ||
+            !itemIsValid(navigationItem, navigationItemType)
+          }
         >
           Save
         </button>

@@ -1,3 +1,5 @@
+/* eslint jsx-a11y/href-no-hash:0 */
+
 import React from 'react';
 import { NavigationItemPropType } from '../propTypes';
 
@@ -7,7 +9,7 @@ function PreviewLink({ navigationItem }) {
   }
 
   return <a className="nav-item nav-link" href="#">{navigationItem.title}</a>;
-};
+}
 
 PreviewLink.propTypes = {
   navigationItem: NavigationItemPropType.isRequired,

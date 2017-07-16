@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { commitEditingNavigationItem, cancelEditingNavigationItem } from '../actions';
 import NavigationItemEditorModal from '../components/NavigationItemEditorModal';
 
-const mapStateToProps = (state, _ownProps) => ({
+const mapStateToProps = state => ({
   navigationItem: state.editingNavigationItem,
   isCommittingEditingNavigationItem: state.requestsInProgress.committingEditingNavigationItem,
 });
@@ -13,7 +13,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     dispatch(commitEditingNavigationItem(ownProps.baseUrl));
   },
 
-  onCancel: (newTitle) => {
+  onCancel: () => {
     dispatch(cancelEditingNavigationItem());
   },
 });

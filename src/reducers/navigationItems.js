@@ -7,25 +7,28 @@ import {
 } from '../actions';
 import NavigationItemStore from '../NavigationItemStore';
 
-export default function navigationItems(navigationItems = new NavigationItemStore([]), action) {
+export default function navigationItems(
+  currentNavigationItems = new NavigationItemStore([]),
+  action,
+) {
   switch (action.type) {
     case COMMIT_EDITING_NAVIGATION_ITEM_SUCCESS:
-      return navigationItems.update(
+      return currentNavigationItems.update(
         action.json.navigation_item.id,
-        item => action.json.navigation_item,
+        () => action.json.navigation_item,
       );
     case DELETE_NAVIGATION_ITEM_SUCCESS:
-      return navigationItems.delete(action.navigationItem.id);
+      return currentNavigationItems.delete(action.navigationItem.id);
     case FETCH_NAVIGATION_ITEMS_SUCCESS:
       return new NavigationItemStore(action.json);
     case SORT_NAVIGATION_ITEMS_SUCCESS:
-      return navigationItems.applySort(action.newNavigationItems);
+      return currentNavigationItems.applySort(action.newNavigationItems);
     case TOGGLE_SECTION_EXPANDED:
       return navigationItems.update(
-        action.navigationSectionId,
+        action.currentNavigationItems,
         section => ({ ...section, expanded: !section.expanded }),
       );
+    default:
+      return currentNavigationItems;
   }
-
-  return navigationItems;
 }

@@ -54,7 +54,7 @@
     "isomorphic-fetch": "^2.2.1",
     "json-fetch": "^7.2.0",
     "prop-types": "^15.5.10",
-    "react-bootstrap4-modal": "^1.0.0",
+    "react-bootstrap4-modal": "^1.1.0",
     "react-dnd": "^2.4.0",
     "react-dnd-html5-backend": "^2.4.1",
     "react-dnd-multi-backend": "^2.3.7",

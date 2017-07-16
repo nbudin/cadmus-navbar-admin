@@ -7,7 +7,7 @@ import {
   EDIT_NAVIGATION_ITEM,
 } from '../actions';
 
-export default function editingNavigationItem(editingNavigationItem = null, action) {
+export default function editingNavigationItem(currentEditingNavigationItem = null, action) {
   switch (action.type) {
     case ADD_LINK:
       return {
@@ -27,14 +27,14 @@ export default function editingNavigationItem(editingNavigationItem = null, acti
       return null;
     case CHANGE_EDITING_NAVIGATION_ITEM:
       return {
-        ...editingNavigationItem,
+        ...currentEditingNavigationItem,
         ...action.newProps,
       };
     case COMMIT_EDITING_NAVIGATION_ITEM_SUCCESS:
       return null;
     case EDIT_NAVIGATION_ITEM:
       return { ...action.navigationItem };
- }
-
-  return editingNavigationItem;
+    default:
+      return currentEditingNavigationItem;
+  }
 }

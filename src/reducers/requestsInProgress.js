@@ -81,7 +81,7 @@ export default function requestsInProgress(requests = initialState, action) {
         ...requests,
         sortingNavigationItems: false,
       };
+    default:
+      return requests;
   }
-
-  return requests;
 }

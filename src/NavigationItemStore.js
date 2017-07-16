@@ -19,7 +19,9 @@ export default class NavigationItemStore {
 
   getRoots() {
     return sortNavigationItems(
-      this.navigationItems.valueSeq().filter(navigationItem => !navigationItem.navigation_section_id),
+      this.navigationItems.valueSeq().filter(
+        navigationItem => !navigationItem.navigation_section_id,
+      ),
     );
   }
 
@@ -59,8 +61,13 @@ export default class NavigationItemStore {
       insertIndex = itemsInSection.size;
     }
 
-    const newItems = itemsInSection.insert(insertIndex, { ...item, navigation_section_id: newNavigationSectionId });
-    const newItemsWithPositions = newItems.map((newItem, index) => ({ ...newItem, position: index + 1 }));
+    const newItems = itemsInSection.insert(insertIndex, {
+      ...item,
+      navigation_section_id: newNavigationSectionId,
+    });
+    const newItemsWithPositions = newItems.map((newItem, index) => (
+      { ...newItem, position: index + 1 }
+    ));
     const newItemsMap = new Map(newItemsWithPositions.map(newItem => [newItem.id, newItem]));
 
     return new NavigationItemStore(this.navigationItems.merge(newItemsMap));

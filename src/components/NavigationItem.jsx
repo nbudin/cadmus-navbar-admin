@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { DragSource, DropTarget } from 'react-dnd';
+import { ConfirmModal } from 'react-bootstrap4-modal';
 import itemType from '../itemType';
 import AddLinkButton from '../containers/AddLinkButton';
 import NavigationItemList from './NavigationItemList';
@@ -83,16 +84,43 @@ class NavigationItem extends React.Component {
     navigationItems: NavigationItemStorePropType.isRequired,
     onDelete: PropTypes.func.isRequired,
     onEdit: PropTypes.func.isRequired,
-    onExpand: PropTypes.func.isRequired,
-    onMoveNavigationItemInto: PropTypes.func.isRequired,
-    onMoveNavigationItemOnto: PropTypes.func.isRequired,
     baseUrl: PropTypes.string.isRequired,
+
+    // These come from @DragSource and @DropTarget
+
+    connectDragSource: PropTypes.func.isRequired,
+    connectDropTarget: PropTypes.func.isRequired,
+    isDragging: PropTypes.bool.isRequired,
+
+    // These are used only by the drag/drop stuff above, and eslint incorrectly thinks they're
+    // unused
+
+    // eslint-disable-next-line react/no-unused-prop-types
+    onExpand: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onMoveNavigationItemInto: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    onMoveNavigationItemOnto: PropTypes.func.isRequired,
   };
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isConfirmingDelete: false,
+    };
+  }
+
   onClickDelete = () => {
-    if (confirm(`Are you sure you want to delete "${this.props.navigationItem.title}" from the navigation bar?`)) {
-      this.props.onDelete();
-    }
+    this.setState({ isConfirmingDelete: true });
+  }
+
+  cancelDelete = () => {
+    this.setState({ isConfirmingDelete: false });
+  }
+
+  confirmDelete = () => {
+    this.props.onDelete();
   }
 
   renderDisclosureTriangle = () => {
@@ -107,6 +135,16 @@ class NavigationItem extends React.Component {
       </span>
     );
   }
+
+  renderConfirmDelete = () => (
+    <ConfirmModal
+      visible={this.state.isConfirmingDelete}
+      onCancel={this.cancelDelete}
+      onOK={this.confirmDelete}
+    >
+      Are you sure you want to delete {this.props.navigationItem.title} from the navigation bar?
+      </ConfirmModal>
+  );
 
   renderSectionItems = () => {
     if (itemType(this.props.navigationItem) !== 'Section' || !this.props.navigationItem.expanded) {
@@ -157,6 +195,7 @@ class NavigationItem extends React.Component {
         <li className={classNames('list-group-item draggable', { dragging: isDragging })}>
           {this.renderItemContent()}
           {this.renderSectionItems()}
+          {this.renderConfirmDelete()}
         </li>,
       ),
     );

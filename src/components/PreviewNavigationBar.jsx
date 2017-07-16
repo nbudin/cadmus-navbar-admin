@@ -1,6 +1,6 @@
 import React from 'react';
 import itemType from '../itemType';
-import { NavigationItemPropType, NavigationItemStorePropType } from '../propTypes';
+import { NavigationItemStorePropType } from '../propTypes';
 import PreviewLink from './PreviewLink';
 import PreviewSection from './PreviewSection';
 
@@ -28,7 +28,7 @@ function PreviewNavigationBar({ navigationItems }) {
       </div>
     </nav>
   );
-};
+}
 
 PreviewNavigationBar.propTypes = {
   navigationItems: NavigationItemStorePropType.isRequired,

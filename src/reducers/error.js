@@ -9,7 +9,7 @@ import {
   SORT_NAVIGATION_ITEMS_SUCCESS,
 } from '../actions';
 
-export default function error(error = null, action) {
+export default function error(currentError = null, action) {
   switch (action.type) {
     case COMMIT_EDITING_NAVIGATION_ITEM_FAILURE:
     case DELETE_NAVIGATION_ITEM_FAILURE:
@@ -22,7 +22,8 @@ export default function error(error = null, action) {
     case DELETE_NAVIGATION_ITEM_SUCCESS:
     case SORT_NAVIGATION_ITEMS_SUCCESS:
       return null;
-  }
 
-  return error;
+    default:
+      return currentError;
+  }
 }

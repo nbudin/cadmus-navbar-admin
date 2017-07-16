@@ -4092,9 +4092,9 @@ rc@^1.1.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-bootstrap4-modal@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-bootstrap4-modal/-/react-bootstrap4-modal-1.0.0.tgz#94206af6da1b9f0db51d1ac4d0b175339c6af6a3"
+react-bootstrap4-modal@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-bootstrap4-modal/-/react-bootstrap4-modal-1.1.0.tgz#35dbe18e01b7857416baa6fc4f1a88eba96024f0"
   dependencies:
     classnames "^2.2.5"
     prop-types "^15.5.10"

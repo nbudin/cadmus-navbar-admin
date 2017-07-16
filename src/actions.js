@@ -54,18 +54,18 @@ function expectResponseStatuses(statuses) {
   return (response) => {
     if (!statuses.includes(response.status)) {
       return response.json().then(
-        (json) => { return new Error(json.error); }
+        json => new Error(json.error),
       ).catch(() => (
         response.text().then(
-          (text) => { return new Error(text); }
+          text => new Error(text),
         )
       )).then(
-        (error) => { throw error; }
+        (error) => { throw error; },
       );
     }
 
     return response;
-  }
+  };
 }
 
 export function addLink(navigationSectionId) {
@@ -208,7 +208,7 @@ export function fetchNavigationItems(url) {
     dispatch(fetchNavigationItemsRequest(url));
     jsonFetch(url, { method: 'GET', expectedStatuses: [200] }).then(
       response => dispatch(
-        fetchNavigationItemsSuccess(response.body.navigation_items, response.body.csrf_token)
+        fetchNavigationItemsSuccess(response.body.navigation_items, response.body.csrf_token),
       ),
     ).catch(
       error => dispatch(fetchNavigationItemsFailure(error)),

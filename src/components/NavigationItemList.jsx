@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import EditableNavigationItem from '../containers/EditableNavigationItem';
 import { NavigationItemStorePropType } from '../propTypes';
 
-function NavigationItemList({ baseUrl, navigationItems, navigationSectionId = null, csrfToken = null }) {
+function NavigationItemList({ baseUrl, navigationItems, navigationSectionId = null }) {
   let itemsInList;
   if (navigationSectionId) {
     itemsInList = navigationItems.getNavigationItemsInSection(navigationSectionId);
@@ -26,7 +26,10 @@ NavigationItemList.propTypes = {
   baseUrl: PropTypes.string.isRequired,
   navigationItems: NavigationItemStorePropType.isRequired,
   navigationSectionId: PropTypes.number,
-  csrfToken: PropTypes.string,
+};
+
+NavigationItemList.defaultProps = {
+  navigationSectionId: null,
 };
 
 export default NavigationItemList;

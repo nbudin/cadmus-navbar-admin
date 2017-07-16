@@ -4,7 +4,7 @@ import PreviewLink from './PreviewLink';
 
 function PreviewSection({ navigationItem, navigationItems }) {
   const sectionItems = navigationItems.getNavigationItemsInSection(navigationItem.id);
-  const links = sectionItems.map((item) => <PreviewLink navigationItem={item} key={item.id} />);
+  const links = sectionItems.map(item => <PreviewLink navigationItem={item} key={item.id} />);
 
   return (
     <li className="nav-item dropdown">
@@ -14,7 +14,7 @@ function PreviewSection({ navigationItem, navigationItems }) {
       </div>
     </li>
   );
-};
+}
 
 PreviewSection.propTypes = {
   navigationItem: NavigationItemPropType.isRequired,

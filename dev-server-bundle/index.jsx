@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import fetch from 'isomorphic-fetch';
-import CadmusNavbarAdmin from './index';
-import './styles/cadmus-navbar-admin.css';
+import CadmusNavbarAdmin from '../src/index';
 
 class CadmusNavbarAdminWrapper extends React.Component {
   constructor(props) {
@@ -38,29 +37,29 @@ class CadmusNavbarAdminWrapper extends React.Component {
           <CadmusNavbarAdmin baseUrl={this.state.baseUrl} pagesUrl={this.state.pagesUrl} />
         </div>
       );
-    } else {
-      return (
-        <form>
-          <div className="form-group">
-            <label htmlFor="baseUrl">Base URL (probably ends in <code>/navigation_items</code>)</label>
-            <input id="baseUrl" name="baseUrl" className="form-control" type="text" value={this.state.baseUrl} onChange={this.inputChanged} />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="pagesUrl">Pages URL (probably ends in <code>/pages</code>)</label>
-            <input id="pagesUrl" name="pagesUrl" className="form-control" type="text" value={this.state.pagesUrl} onChange={this.inputChanged}  />
-          </div>
-
-          <button type="button" className="btn btn-primary" onClick={this.ludicrousSpeed}>Ludicrous speed!</button>
-        </form>
-      );
     }
+
+    return (
+      <form>
+        <div className="form-group">
+          <label htmlFor="baseUrl">Base URL (probably ends in <code>/navigation_items</code>)</label>
+          <input id="baseUrl" name="baseUrl" className="form-control" type="text" value={this.state.baseUrl} onChange={this.inputChanged} />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="pagesUrl">Pages URL (probably ends in <code>/pages</code>)</label>
+          <input id="pagesUrl" name="pagesUrl" className="form-control" type="text" value={this.state.pagesUrl} onChange={this.inputChanged} />
+        </div>
+
+        <button type="button" className="btn btn-primary" onClick={this.ludicrousSpeed}>Ludicrous speed!</button>
+      </form>
+    );
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
     <CadmusNavbarAdminWrapper />,
-    document.getElementById('cadmus-navbar-admin')
+    document.getElementById('cadmus-navbar-admin'),
   );
 }, false);

@@ -4,9 +4,9 @@ import { changeEditingNavigationItem } from '../actions';
 import LinkForm from '../components/LinkForm';
 import { NavigationItemPropType } from '../propTypes';
 
-const mapStateToProps = (state, _ownProps) => ({ pages: state.pages });
+const mapStateToProps = state => ({ pages: state.pages });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   onPageChanged: (newPage) => {
     dispatch(changeEditingNavigationItem({ page_id: newPage ? newPage.id : null }));
   },

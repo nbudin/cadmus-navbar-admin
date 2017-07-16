@@ -37,7 +37,7 @@ class NavbarAdminForm extends React.Component {
   generatePreview = (type, item, style) => {
     if (type === 'NAVIGATION_ITEM') {
       return (
-        <div style={{...style, width: `${this.wrapperDiv.offsetWidth}px` }}>
+        <div style={{ ...style, width: `${this.wrapperDiv.offsetWidth}px` }}>
           <EditableNavigationItem
             baseUrl={this.props.baseUrl}
             navigationItem={item}

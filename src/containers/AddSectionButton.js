@@ -1,11 +1,10 @@
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { addSection } from '../actions';
 import AddButton from '../components/AddButton';
 
-const mapStateToProps = (_state, _ownProps) => ({ caption: 'Add section' });
+const mapStateToProps = () => ({ caption: 'Add section' });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
   onClick: () => {
     dispatch(addSection());
   },
