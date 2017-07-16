@@ -9,6 +9,7 @@ import EditableNavigationItem from '../containers/EditableNavigationItem';
 import NavigationItemList from './NavigationItemList';
 import NavigationItemEditor from '../containers/NavigationItemEditor';
 import { NavigationItemStorePropType } from '../propTypes';
+import PreviewNavigationBar from './PreviewNavigationBar';
 
 @DragDropContext(MultiBackend(HTML5toTouch))
 class NavbarAdminForm extends React.Component {
@@ -64,6 +65,8 @@ class NavbarAdminForm extends React.Component {
     return (
       <div ref={(div) => { this.wrapperDiv = div; }}>
         {this.renderError()}
+
+        <PreviewNavigationBar navigationItems={this.props.navigationItems} />
 
         <NavigationItemList
           baseUrl={this.props.baseUrl}

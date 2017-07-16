@@ -66,7 +66,7 @@ class LinkForm extends React.Component {
     return (
       <form className="form" onSubmit={this.onSubmit}>
         <div className="form-group">
-          <label htmlFor={pageId}>Page</label>
+          <label htmlFor={pageId}>Page to link to</label>
           <select
             id={pageId}
             className="form-control"
@@ -79,7 +79,7 @@ class LinkForm extends React.Component {
         </div>
 
         <div className="form-group">
-          <label htmlFor={titleId}>Title</label>
+          <label htmlFor={titleId}>Text of link on navigation bar</label>
           <input
             id={titleId}
             type="text"

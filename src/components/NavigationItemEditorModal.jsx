@@ -30,12 +30,27 @@ const renderForm = (navigationItem, navigationItemType, onSave) => {
   return null;
 };
 
+function itemIsValid(navigationItem, navigationItemType) {
+  if (!navigationItem) {
+    return false;
+  }
+
+  if (navigationItemType === 'Link' && !navigationItem.page_id) {
+    return false;
+  }
+
+  if (!navigationItem.title || navigationItem.title.trim() === '') {
+    return false;
+  }
+
+  return true;
+}
+
 const NavigationItemEditorModal = ({ navigationItem, onSave, onCancel, isCommittingEditingNavigationItem }) => {
   let navigationItemType;
   if (navigationItem) {
     navigationItemType = itemType(navigationItem);
   }
-
   return (
     <Modal visible={!!navigationItem}>
       <div className="modal-header">
@@ -57,7 +72,7 @@ const NavigationItemEditorModal = ({ navigationItem, onSave, onCancel, isCommitt
           type="button"
           className="btn btn-primary"
           onClick={onSave}
-          disabled={isCommittingEditingNavigationItem}
+          disabled={isCommittingEditingNavigationItem || !itemIsValid(navigationItem, navigationItemType)}
         >
           Save
         </button>

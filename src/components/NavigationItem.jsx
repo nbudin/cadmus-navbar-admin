@@ -34,13 +34,13 @@ const navigationItemDropTarget = {
     return true;
   },
 
-  // hover(props, monitor) {
-  //   const dragItem = monitor.getItem();
-  //
-  //   if (itemType(props.navigationItem) === 'Section' && itemType(dragItem) === 'Link' && !props.navigationItem.expanded) {
-  //     props.onExpand();
-  //   }
-  // },
+  hover(props, monitor) {
+    const dragItem = monitor.getItem();
+
+    if (itemType(props.navigationItem) === 'Section' && itemType(dragItem) === 'Link' && !props.navigationItem.expanded) {
+      props.onExpand();
+    }
+  },
 
   drop(props, monitor) {
     if (!monitor.canDrop()) {
