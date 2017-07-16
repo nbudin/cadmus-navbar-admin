@@ -4,7 +4,7 @@
   "description": "A React and Redux-based admin interface for cadmus_navbar",
   "main": "lib/index.js",
   "repository": "https://github.com/nbudin/cadmus-navbar-admin",
-  "author": "Nat Budin <nbudin@patientslikeme.com>",
+  "author": "Nat Budin <natbudin@gmail.com>",
   "license": "MIT",
   "files": [
     "dist/index.*",
