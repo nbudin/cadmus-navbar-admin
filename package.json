@@ -1,6 +1,6 @@
 {
   "name": "cadmus-navbar-admin",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A React and Redux-based admin interface for cadmus_navbar",
   "main": "lib/index.js",
   "repository": "https://github.com/nbudin/cadmus-navbar-admin",
