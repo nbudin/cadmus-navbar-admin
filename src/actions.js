@@ -47,7 +47,7 @@ function saveNavigationItem(navigationItem, url, csrfToken) {
     headers: {
       'X-CSRF-Token': csrfToken,
     },
-    body: navigationItem,
+    body: { navigation_item: navigationItem },
     expectedStatuses: [201, 202],
   });
 }
@@ -307,4 +307,3 @@ export function toggleSectionExpanded(navigationSectionId) {
     navigationSectionId,
   };
 }
-
