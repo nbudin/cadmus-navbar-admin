@@ -5,12 +5,11 @@ import NavigationItemEditorModal from '../components/NavigationItemEditorModal';
 
 const mapStateToProps = state => ({
   navigationItem: state.editingNavigationItem,
-  isCommittingEditingNavigationItem: state.requestsInProgress.committingEditingNavigationItem,
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   onSave: () => {
-    dispatch(commitEditingNavigationItem(ownProps.baseUrl));
+    dispatch(commitEditingNavigationItem(ownProps.client));
   },
 
   onCancel: () => {
@@ -24,7 +23,7 @@ const NavigationItemEditor = connect(
 )(NavigationItemEditorModal);
 
 NavigationItemEditor.propTypes = {
-  baseUrl: PropTypes.string.isRequired,
+  client: PropTypes.shape({}).isRequired,
 };
 
 export default NavigationItemEditor;

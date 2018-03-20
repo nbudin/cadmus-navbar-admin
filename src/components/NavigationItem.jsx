@@ -84,7 +84,7 @@ class NavigationItem extends React.Component {
     navigationItems: NavigationItemStorePropType.isRequired,
     onDelete: PropTypes.func.isRequired,
     onEdit: PropTypes.func.isRequired,
-    baseUrl: PropTypes.string.isRequired,
+    client: PropTypes.shape({}).isRequired,
 
     // These come from @DragSource and @DropTarget
 
@@ -154,7 +154,7 @@ class NavigationItem extends React.Component {
     return (
       <div className="w-100 mt-2">
         <NavigationItemList
-          baseUrl={this.props.baseUrl}
+          client={this.props.client}
           navigationItems={this.props.navigationItems}
           navigationSectionId={this.props.navigationItem.id}
         />

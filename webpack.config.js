@@ -82,6 +82,11 @@ module.exports = {
   plugins: getPlugins(),
 
   devServer: {
+    allowedHosts: ['interconr.intercode.test'],
     contentBase: path.join(__dirname, "public"),
+    proxy: {
+      '/cms_navigation_items': { target: 'http://interconr.intercode.test:5000' },
+      '/pages': { target: 'http://interconr.intercode.test:5000' },
+    }
   }
 };

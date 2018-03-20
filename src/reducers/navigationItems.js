@@ -20,7 +20,7 @@ export default function navigationItems(
     case DELETE_NAVIGATION_ITEM_SUCCESS:
       return currentNavigationItems.delete(action.navigationItem.id);
     case FETCH_NAVIGATION_ITEMS_SUCCESS:
-      return new NavigationItemStore(action.json);
+      return new NavigationItemStore(action.navigationItems);
     case SORT_NAVIGATION_ITEMS_SUCCESS:
       return currentNavigationItems.applySort(action.newNavigationItems);
     case TOGGLE_SECTION_EXPANDED:

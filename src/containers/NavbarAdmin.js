@@ -22,11 +22,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   fetchNavigationItems: () => {
-    dispatch(fetchNavigationItems(ownProps.baseUrl));
+    dispatch(fetchNavigationItems(ownProps.client));
   },
 
   fetchPages: () => {
-    dispatch(fetchPages(ownProps.pagesUrl));
+    dispatch(fetchPages(ownProps.client));
   },
 });
 

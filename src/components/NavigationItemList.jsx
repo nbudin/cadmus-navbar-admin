@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import EditableNavigationItem from '../containers/EditableNavigationItem';
 import { NavigationItemStorePropType } from '../propTypes';
 
-function NavigationItemList({ baseUrl, navigationItems, navigationSectionId = null }) {
+function NavigationItemList({ client, navigationItems, navigationSectionId = null }) {
   let itemsInList;
   if (navigationSectionId) {
     itemsInList = navigationItems.getNavigationItemsInSection(navigationSectionId);
@@ -15,7 +15,7 @@ function NavigationItemList({ baseUrl, navigationItems, navigationSectionId = nu
     <EditableNavigationItem
       key={navigationItem.id}
       navigationItem={navigationItem}
-      baseUrl={baseUrl}
+      client={client}
     />
     ));
 
@@ -23,7 +23,7 @@ function NavigationItemList({ baseUrl, navigationItems, navigationSectionId = nu
 }
 
 NavigationItemList.propTypes = {
-  baseUrl: PropTypes.string.isRequired,
+  client: PropTypes.shape({}).isRequired,
   navigationItems: NavigationItemStorePropType.isRequired,
   navigationSectionId: PropTypes.number,
 };

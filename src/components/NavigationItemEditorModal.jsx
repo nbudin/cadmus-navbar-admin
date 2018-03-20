@@ -51,13 +51,14 @@ const NavigationItemEditorModal = ({
   onSave,
   onCancel,
   isCommittingEditingNavigationItem,
+  client,
 }) => {
   let navigationItemType;
   if (navigationItem) {
     navigationItemType = itemType(navigationItem);
   }
   return (
-    <Modal visible={!!navigationItem}>
+    <Modal visible={!!navigationItem} dialogClassName="modal-lg">
       <div className="modal-header">
         <h5 className="modal-title">{renderTitle(navigationItemType)}</h5>
       </div>
@@ -78,7 +79,7 @@ const NavigationItemEditorModal = ({
           className="btn btn-primary"
           onClick={onSave}
           disabled={
-            isCommittingEditingNavigationItem ||
+            client.requestsInProgress.savingNavigationItem ||
             !itemIsValid(navigationItem, navigationItemType)
           }
         >
@@ -94,6 +95,11 @@ NavigationItemEditorModal.propTypes = {
   onSave: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   isCommittingEditingNavigationItem: PropTypes.bool.isRequired,
+  client: PropTypes.shape({
+    requestsInProgress: PropTypes.shape({
+      savingNavigationItem: PropTypes.bool,
+    }),
+  }).isRequired,
 };
 
 export default NavigationItemEditorModal;

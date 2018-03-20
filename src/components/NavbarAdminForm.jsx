@@ -19,7 +19,7 @@ class NavbarAdminForm extends React.Component {
     navigationItems: NavigationItemStorePropType.isRequired,
     isLoadingNavigationItems: PropTypes.bool,
     isLoadingPages: PropTypes.bool,
-    baseUrl: PropTypes.string.isRequired,
+    client: PropTypes.shape({}).isRequired,
     error: PropTypes.string,
   };
 
@@ -39,7 +39,7 @@ class NavbarAdminForm extends React.Component {
       return (
         <div style={{ ...style, width: `${this.wrapperDiv.offsetWidth}px` }}>
           <EditableNavigationItem
-            baseUrl={this.props.baseUrl}
+            client={this.props.client}
             navigationItem={item}
           />
         </div>
@@ -59,7 +59,9 @@ class NavbarAdminForm extends React.Component {
 
   render = () => {
     if (this.props.isLoadingNavigationItems || this.props.isLoadingPages) {
-      return <div>Loading...</div>;
+      return (
+        <div>Loading...</div>
+      );
     }
 
     return (
@@ -69,7 +71,7 @@ class NavbarAdminForm extends React.Component {
         <PreviewNavigationBar navigationItems={this.props.navigationItems} />
 
         <NavigationItemList
-          baseUrl={this.props.baseUrl}
+          client={this.props.client}
           navigationItems={this.props.navigationItems}
         />
 
@@ -82,7 +84,7 @@ class NavbarAdminForm extends React.Component {
           </li>
         </ul>
 
-        <NavigationItemEditor baseUrl={this.props.baseUrl} />
+        <NavigationItemEditor client={this.props.client} />
         <Preview generator={this.generatePreview} />
       </div>
     );
