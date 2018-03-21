@@ -45,6 +45,7 @@ module.exports = {
 
   entry: {
     index: 'index',
+    RESTClient: 'RESTClient',
     'dev-server-bundle': './dev-server-bundle',
   },
 
