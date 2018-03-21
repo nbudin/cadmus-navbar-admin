@@ -1,45 +1,23 @@
 import React from 'react';
-import thunkMiddleware from 'redux-thunk';
-import { createLogger } from 'redux-logger';
-import { createStore, applyMiddleware, compose } from 'redux';
-import { Provider } from 'react-redux';
-import NavbarAdmin from './containers/NavbarAdmin';
-import navbarAdminApp from './reducers';
-import RESTClient from './RESTClient';
+import PropTypes from 'prop-types';
+import { ClientContextProvider } from './ClientContext';
+import { DataContextProvider } from './DataContext';
+import { EditingNavigationItemContextProvider } from './EditingNavigationItemContext';
+import NavbarAdminForm from './components/NavbarAdminForm';
 import './styles/cadmus-navbar-admin.css';
 
-const loggerMiddleware = createLogger();
+const CadmusNavbarAdminApp = ({ client }) => (
+  <ClientContextProvider client={client}>
+    <DataContextProvider>
+      <EditingNavigationItemContextProvider>
+        <NavbarAdminForm />
+      </EditingNavigationItemContextProvider>
+    </DataContextProvider>
+  </ClientContextProvider>
+);
 
-// eslint-disable-next-line no-underscore-dangle
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
-class CadmusNavbarAdminApp extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      store: createStore(
-        navbarAdminApp,
-        composeEnhancers(
-          applyMiddleware(
-            thunkMiddleware,
-            loggerMiddleware,
-          ),
-        ),
-      ),
-      client: new RESTClient(props),
-    };
-  }
-
-  render = () => (
-    <Provider store={this.state.store}>
-      <NavbarAdmin client={this.state.client} />
-    </Provider>
-  )
-}
-
-export {
-  NavbarAdmin,
-  navbarAdminApp,
+CadmusNavbarAdminApp.propTypes = {
+  client: PropTypes.shape({}).isRequired,
 };
+
 export default CadmusNavbarAdminApp;

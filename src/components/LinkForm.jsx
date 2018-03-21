@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { enableUniqueIds } from 'react-html-id';
 import { NavigationItemPropType } from '../propTypes';
+import { withDataContext } from '../DataContext';
 
+@withDataContext
 class LinkForm extends React.Component {
   static propTypes = {
     navigationItem: NavigationItemPropType.isRequired,
@@ -12,8 +14,7 @@ class LinkForm extends React.Component {
         name: PropTypes.string.isRequired,
       }).isRequired,
     ).isRequired,
-    onPageChanged: PropTypes.func.isRequired,
-    onTitleChanged: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
   }
 
@@ -44,15 +45,18 @@ class LinkForm extends React.Component {
       currentPage && this.props.navigationItem.title === currentPage.name
     );
 
+    const updatedItem = { ...this.props.navigationItem };
+
     if (titleIsBlank || titleExactlyMatchesPage) {
-      this.props.onTitleChanged(page ? page.name : '');
+      updatedItem.title = (page ? page.name : '');
     }
 
-    this.props.onPageChanged(page);
+    updatedItem.page_id = (page ? page.id : null);
+    this.props.onChange(updatedItem);
   }
 
   titleChanged = (event) => {
-    this.props.onTitleChanged(event.target.value);
+    this.props.onChange({ ...this.props.navigationItem, title: event.target.value });
   }
 
   render = () => {

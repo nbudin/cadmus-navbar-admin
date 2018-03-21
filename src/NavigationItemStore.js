@@ -41,6 +41,10 @@ export default class NavigationItemStore {
     return this.navigationItems.valueSeq().map(...args);
   }
 
+  add(navigationItem) {
+    return new NavigationItemStore(this.navigationItems.set(navigationItem.id, navigationItem));
+  }
+
   update(id, updater) {
     const updatedItem = updater(this.get(id));
     return new NavigationItemStore(this.navigationItems.set(id, updatedItem));

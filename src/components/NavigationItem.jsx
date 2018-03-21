@@ -4,10 +4,13 @@ import classNames from 'classnames';
 import { DragSource, DropTarget } from 'react-dnd';
 import { ConfirmModal } from 'react-bootstrap4-modal';
 import itemType from '../itemType';
-import AddLinkButton from '../containers/AddLinkButton';
+import AddButton from './AddButton';
+import { navigationItemEditingController } from '../EditingNavigationItemContext';
 import NavigationItemList from './NavigationItemList';
 import { NavigationItemPropType, NavigationItemStorePropType } from '../propTypes';
-import SectionDisclosureTriangle from '../containers/SectionDisclosureTriangle';
+import SectionDisclosureTriangle from './SectionDisclosureTriangle';
+import { withClient } from '../ClientContext';
+import { withDataContext } from '../DataContext';
 
 const navigationItemDragSource = {
   beginDrag(props) {
@@ -35,15 +38,15 @@ const navigationItemDropTarget = {
     return true;
   },
 
-  hover(props, monitor) {
+  hover(props, monitor, component) {
     const dragItem = monitor.getItem();
 
     if (itemType(props.navigationItem) === 'Section' && itemType(dragItem) === 'Link' && !props.navigationItem.expanded) {
-      props.onExpand();
+      component.expand();
     }
   },
 
-  drop(props, monitor) {
+  drop(props, monitor, component) {
     if (!monitor.canDrop()) {
       return;
     }
@@ -55,9 +58,9 @@ const navigationItemDropTarget = {
     }
 
     if (itemType(props.navigationItem) === 'Section' && itemType(dragItem) === 'Link' && props.navigationItem.expanded) {
-      props.onMoveNavigationItemInto(dragItem, props.navigationItems);
+      component.onMoveNavigationItemInto(dragItem);
     } else {
-      props.onMoveNavigationItemOnto(dragItem, props.navigationItems);
+      component.onMoveNavigationItemOnto(dragItem);
     }
   },
 };
@@ -76,31 +79,28 @@ function collectNavigationItemDrop(connect, monitor) {
   };
 }
 
+@withClient
+@withDataContext
+@navigationItemEditingController
 @DragSource('NAVIGATION_ITEM', navigationItemDragSource, collectNavigationItemDrag)
 @DropTarget('NAVIGATION_ITEM', navigationItemDropTarget, collectNavigationItemDrop)
 class NavigationItem extends React.Component {
   static propTypes = {
     navigationItem: NavigationItemPropType.isRequired,
-    navigationItems: NavigationItemStorePropType.isRequired,
-    onDelete: PropTypes.func.isRequired,
-    onEdit: PropTypes.func.isRequired,
-    client: PropTypes.shape({}).isRequired,
+    navigationItemStore: NavigationItemStorePropType.isRequired,
+    setNavigationItemStore: PropTypes.func.isRequired,
+    editNavigationItem: PropTypes.func.isRequired,
+    newNavigationLink: PropTypes.func.isRequired,
+    client: PropTypes.shape({
+      sortNavigationItems: PropTypes.func.isRequired,
+      deleteNavigationItem: PropTypes.func.isRequired,
+    }).isRequired,
 
     // These come from @DragSource and @DropTarget
 
     connectDragSource: PropTypes.func.isRequired,
     connectDropTarget: PropTypes.func.isRequired,
     isDragging: PropTypes.bool.isRequired,
-
-    // These are used only by the drag/drop stuff above, and eslint incorrectly thinks they're
-    // unused
-
-    // eslint-disable-next-line react/no-unused-prop-types
-    onExpand: PropTypes.func.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    onMoveNavigationItemInto: PropTypes.func.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    onMoveNavigationItemOnto: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -111,6 +111,45 @@ class NavigationItem extends React.Component {
     };
   }
 
+  onMoveNavigationItemOnto = async (movedItem) => {
+    const myItem = this.props.navigationItem;
+    const sameSection = (movedItem.navigation_section_id === myItem.navigation_section_id);
+    const movingDown = (sameSection && movedItem.position < myItem.position);
+
+    let newNavigationItems;
+    if (movingDown) {
+      newNavigationItems = this.props.navigationItemStore.reposition(
+        movedItem.id,
+        myItem.navigation_section_id,
+        myItem.position + 1,
+      );
+    } else {
+      newNavigationItems = this.props.navigationItemStore.reposition(
+        movedItem.id,
+        myItem.navigation_section_id,
+        myItem.position,
+      );
+    }
+
+    await this.props.client.sortNavigationItems(newNavigationItems);
+    this.props.setNavigationItemStore(
+      this.props.navigationItemStore.applySort(newNavigationItems),
+    );
+  }
+
+  onMoveNavigationItemInto = async (movedItem) => {
+    const newNavigationItems = this.props.navigationItemStore.reposition(
+      movedItem.id,
+      this.props.navigationItem.id,
+      1,
+    );
+
+    await this.props.client.sortNavigationItems(newNavigationItems);
+    this.props.setNavigationItemStore(
+      this.props.navigationItemStore.applySort(newNavigationItems),
+    );
+  }
+
   onClickDelete = () => {
     this.setState({ isConfirmingDelete: true });
   }
@@ -119,8 +158,28 @@ class NavigationItem extends React.Component {
     this.setState({ isConfirmingDelete: false });
   }
 
-  confirmDelete = () => {
-    this.props.onDelete();
+  confirmDelete = async () => {
+    await this.props.client.deleteNavigationItem(this.props.navigationItem);
+
+    const newStore = this.props.navigationItemStore.delete(this.props.navigationItem.id);
+    this.props.setNavigationItemStore(newStore);
+  }
+
+  editNavigationItem = () => {
+    this.props.editNavigationItem(this.props.navigationItem);
+  }
+
+  expand = () => {
+    this.props.setNavigationItemStore(
+      this.props.navigationItemStore.update(
+        this.props.navigationItem.id,
+        navigationItem => ({ ...navigationItem, expanded: true }),
+      ),
+    );
+  }
+
+  newLinkClicked = () => {
+    this.props.newNavigationLink(this.props.navigationItem.id);
   }
 
   renderDisclosureTriangle = () => {
@@ -130,7 +189,7 @@ class NavigationItem extends React.Component {
 
     return (
       <span>
-        <SectionDisclosureTriangle navigationItemId={this.props.navigationItem.id} />
+        <SectionDisclosureTriangle navigationSectionId={this.props.navigationItem.id} />
         {' '}
       </span>
     );
@@ -153,14 +212,12 @@ class NavigationItem extends React.Component {
 
     return (
       <div className="w-100 mt-2">
-        <NavigationItemList
-          client={this.props.client}
-          navigationItems={this.props.navigationItems}
-          navigationSectionId={this.props.navigationItem.id}
-        />
+        <NavigationItemList navigationSectionId={this.props.navigationItem.id} />
         <ul className="list-inline mt-2">
           <li className="list-inline-item">
-            <AddLinkButton navigationSectionId={this.props.navigationItem.id} />
+            <AddButton onClick={this.newLinkClicked}>
+              Add link
+            </AddButton>
           </li>
         </ul>
       </div>
@@ -179,7 +236,13 @@ class NavigationItem extends React.Component {
           {navigationItem.title}
         </div>
         <div className="col text-right">
-          <button type="button" className="btn btn-secondary btn-sm" onClick={this.props.onEdit}>Edit</button>
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm"
+            onClick={() => { this.editNavigationItem(); }}
+          >
+            Edit
+          </button>
           {' '}
           <button type="button" className="btn btn-danger btn-sm" onClick={this.onClickDelete}>Delete</button>
         </div>

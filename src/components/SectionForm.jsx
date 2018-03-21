@@ -6,7 +6,7 @@ import { NavigationItemPropType } from '../propTypes';
 class SectionForm extends React.Component {
   static propTypes = {
     navigationItem: NavigationItemPropType.isRequired,
-    onTitleChanged: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
   }
 
@@ -21,7 +21,7 @@ class SectionForm extends React.Component {
   }
 
   titleChanged = (event) => {
-    this.props.onTitleChanged(event.target.value);
+    this.props.onChange({ ...this.props.navigationItem, title: event.target.value });
   }
 
   render = () => {

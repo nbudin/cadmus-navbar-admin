@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import fetch from 'isomorphic-fetch';
 import 'babel-polyfill';
 import CadmusNavbarAdmin from '../src/index';
+import RESTClient from '../src/RESTClient';
 
 class CadmusNavbarAdminWrapper extends React.Component {
   constructor(props) {
@@ -33,9 +33,14 @@ class CadmusNavbarAdminWrapper extends React.Component {
 
   render = () => {
     if (this.state.gotUrlsFromQueryParams) {
+      const client = new RESTClient({
+        baseUrl: this.state.baseUrl,
+        pagesUrl: this.state.pagesUrl,
+      });
+
       return (
         <div>
-          <CadmusNavbarAdmin baseUrl={this.state.baseUrl} pagesUrl={this.state.pagesUrl} />
+          <CadmusNavbarAdmin client={client} />
         </div>
       );
     }

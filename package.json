@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "create-react-context": "^0.2.1",
     "immutable": "^3.8.1",
     "isomorphic-fetch": "^2.2.1",
     "json-fetch": "^7.2.0",

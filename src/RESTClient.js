@@ -31,6 +31,15 @@ class APIClient {
       loadingPages: false,
       sortingNavigationItems: false,
     };
+    this.errorSubscribers = [];
+  }
+
+  addErrorSubscriber(subscriber) {
+    this.errorSubscribers.push(subscriber);
+  }
+
+  onError(error) {
+    this.errorSubscribers.forEach((errorSubscriber) => { errorSubscriber(error); });
   }
 
   saveUrlForNavigationItem(navigationItem) {
@@ -49,6 +58,9 @@ class APIClient {
       const response = await jsonFetch(this.baseUrl, { method: 'GET', expectedStatuses: [200] });
       this.csrfToken = response.body.csrf_token;
       return response.body.navigation_items;
+    } catch (error) {
+      this.onError(error);
+      throw error;
     } finally {
       this.requestsInProgress.loadingNavigationItems = false;
     }
@@ -60,6 +72,9 @@ class APIClient {
     try {
       const response = await jsonFetch(this.pagesUrl, { method: 'GET', expectedStatuses: [200] });
       return response.body;
+    } catch (error) {
+      this.onError(error);
+      throw error;
     } finally {
       this.requestsInProgress.loadingPages = false;
     }
@@ -74,7 +89,7 @@ class APIClient {
     this.requestsInProgress.savingNavigationItem = true;
 
     try {
-      return await jsonFetch(this.saveUrlForNavigationItem(navigationItem), {
+      const response = await jsonFetch(this.saveUrlForNavigationItem(navigationItem), {
         method,
         headers: {
           'X-CSRF-Token': this.csrfToken,
@@ -82,6 +97,10 @@ class APIClient {
         body: { navigation_item: navigationItem },
         expectedStatuses: [201, 202],
       });
+      return response.body.navigation_item;
+    } catch (error) {
+      this.onError(error);
+      throw error;
     } finally {
       this.requestsInProgress.savingNavigationItem = false;
     }
@@ -98,6 +117,9 @@ class APIClient {
         },
         credentials: 'include',
       }).then(expectResponseStatuses([200]));
+    } catch (error) {
+      this.onError(error);
+      throw error;
     } finally {
       this.requestsInProgress.deletingNavigationItem = false;
     }
@@ -123,6 +145,9 @@ class APIClient {
         body: JSON.stringify(payload),
         credentials: 'include',
       }).then(expectResponseStatuses([200]));
+    } catch (error) {
+      this.onError(error);
+      throw error;
     } finally {
       this.requestsInProgress.sortingNavigationItems = false;
     }
