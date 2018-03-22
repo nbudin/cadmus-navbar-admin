@@ -12,6 +12,54 @@ import SectionDisclosureTriangle from './SectionDisclosureTriangle';
 import { withClient } from '../ClientContext';
 import { withDataContext } from '../DataContext';
 
+const expandNavigationItem = (props) => {
+  props.setNavigationItemStore(
+    props.navigationItemStore.update(
+      props.navigationItem.id,
+      navigationItem => ({ ...navigationItem, expanded: true }),
+    ),
+  );
+};
+
+const onMoveNavigationItemOnto = async (movedItem, props) => {
+  const myItem = props.navigationItem;
+  const sameSection = (movedItem.navigation_section_id === myItem.navigation_section_id);
+  const movingDown = (sameSection && movedItem.position < myItem.position);
+
+  let newNavigationItems;
+  if (movingDown) {
+    newNavigationItems = props.navigationItemStore.reposition(
+      movedItem.id,
+      myItem.navigation_section_id,
+      myItem.position + 1,
+    );
+  } else {
+    newNavigationItems = props.navigationItemStore.reposition(
+      movedItem.id,
+      myItem.navigation_section_id,
+      myItem.position,
+    );
+  }
+
+  await props.client.sortNavigationItems(newNavigationItems);
+  props.setNavigationItemStore(
+    props.navigationItemStore.applySort(newNavigationItems),
+  );
+};
+
+const onMoveNavigationItemInto = async (movedItem, props) => {
+  const newNavigationItems = props.navigationItemStore.reposition(
+    movedItem.id,
+    this.props.navigationItem.id,
+    1,
+  );
+
+  await props.client.sortNavigationItems(newNavigationItems);
+  props.setNavigationItemStore(
+    props.navigationItemStore.applySort(newNavigationItems),
+  );
+};
+
 const navigationItemDragSource = {
   beginDrag(props) {
     return props.navigationItem;
@@ -38,15 +86,15 @@ const navigationItemDropTarget = {
     return true;
   },
 
-  hover(props, monitor, component) {
+  hover(props, monitor) {
     const dragItem = monitor.getItem();
 
     if (itemType(props.navigationItem) === 'Section' && itemType(dragItem) === 'Link' && !props.navigationItem.expanded) {
-      component.expand();
+      expandNavigationItem(props);
     }
   },
 
-  drop(props, monitor, component) {
+  drop(props, monitor) {
     if (!monitor.canDrop()) {
       return;
     }
@@ -58,9 +106,9 @@ const navigationItemDropTarget = {
     }
 
     if (itemType(props.navigationItem) === 'Section' && itemType(dragItem) === 'Link' && props.navigationItem.expanded) {
-      component.onMoveNavigationItemInto(dragItem);
+      onMoveNavigationItemInto(dragItem, props);
     } else {
-      component.onMoveNavigationItemOnto(dragItem);
+      onMoveNavigationItemOnto(dragItem, props);
     }
   },
 };
@@ -111,45 +159,6 @@ class NavigationItem extends React.Component {
     };
   }
 
-  onMoveNavigationItemOnto = async (movedItem) => {
-    const myItem = this.props.navigationItem;
-    const sameSection = (movedItem.navigation_section_id === myItem.navigation_section_id);
-    const movingDown = (sameSection && movedItem.position < myItem.position);
-
-    let newNavigationItems;
-    if (movingDown) {
-      newNavigationItems = this.props.navigationItemStore.reposition(
-        movedItem.id,
-        myItem.navigation_section_id,
-        myItem.position + 1,
-      );
-    } else {
-      newNavigationItems = this.props.navigationItemStore.reposition(
-        movedItem.id,
-        myItem.navigation_section_id,
-        myItem.position,
-      );
-    }
-
-    await this.props.client.sortNavigationItems(newNavigationItems);
-    this.props.setNavigationItemStore(
-      this.props.navigationItemStore.applySort(newNavigationItems),
-    );
-  }
-
-  onMoveNavigationItemInto = async (movedItem) => {
-    const newNavigationItems = this.props.navigationItemStore.reposition(
-      movedItem.id,
-      this.props.navigationItem.id,
-      1,
-    );
-
-    await this.props.client.sortNavigationItems(newNavigationItems);
-    this.props.setNavigationItemStore(
-      this.props.navigationItemStore.applySort(newNavigationItems),
-    );
-  }
-
   onClickDelete = () => {
     this.setState({ isConfirmingDelete: true });
   }
@@ -167,15 +176,6 @@ class NavigationItem extends React.Component {
 
   editNavigationItem = () => {
     this.props.editNavigationItem(this.props.navigationItem);
-  }
-
-  expand = () => {
-    this.props.setNavigationItemStore(
-      this.props.navigationItemStore.update(
-        this.props.navigationItem.id,
-        navigationItem => ({ ...navigationItem, expanded: true }),
-      ),
-    );
   }
 
   newLinkClicked = () => {
