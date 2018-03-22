@@ -1,5 +1,4 @@
-import fetch from 'isomorphic-fetch';
-import jsonFetch from 'json-fetch';
+import fetch from 'unfetch';
 
 function expectResponseStatuses(statuses) {
   return (response) => {
@@ -17,6 +16,14 @@ function expectResponseStatuses(statuses) {
 
     return response;
   };
+}
+
+function getJSON(url) {
+  return fetch(url, {
+    method: 'GET',
+    headers: { Accept: 'application/json' },
+    credentials: 'include',
+  }).then(expectResponseStatuses([200])).then(resp => resp.json());
 }
 
 class APIClient {
@@ -55,9 +62,9 @@ class APIClient {
     this.requestsInProgress.loadingNavigationItems = true;
 
     try {
-      const response = await jsonFetch(this.baseUrl, { method: 'GET', expectedStatuses: [200] });
-      this.csrfToken = response.body.csrf_token;
-      return response.body.navigation_items;
+      const response = await getJSON(this.baseUrl);
+      this.csrfToken = response.csrf_token;
+      return response.navigation_items;
     } catch (error) {
       this.onError(error);
       throw error;
@@ -70,8 +77,8 @@ class APIClient {
     this.requestsInProgress.loadingPages = true;
 
     try {
-      const response = await jsonFetch(this.pagesUrl, { method: 'GET', expectedStatuses: [200] });
-      return response.body;
+      const response = await getJSON(this.pagesUrl);
+      return response;
     } catch (error) {
       this.onError(error);
       throw error;
@@ -89,15 +96,14 @@ class APIClient {
     this.requestsInProgress.savingNavigationItem = true;
 
     try {
-      const response = await jsonFetch(this.saveUrlForNavigationItem(navigationItem), {
+      const response = await fetch(this.saveUrlForNavigationItem(navigationItem), {
         method,
         headers: {
           'X-CSRF-Token': this.csrfToken,
         },
         body: { navigation_item: navigationItem },
-        expectedStatuses: [201, 202],
-      });
-      return response.body.navigation_item;
+      }).then(expectResponseStatuses([201, 202])).then(resp => resp.json());
+      return response.navigation_item;
     } catch (error) {
       this.onError(error);
       throw error;

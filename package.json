@@ -36,29 +36,28 @@
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.1.0",
     "extract-text-webpack-plugin": "^3.0.0",
-    "react": "^15.6.1",
+    "react": "^16.0.0",
     "react-build-dist": "^0.0.8",
-    "react-dom": "^15.6.1",
+    "react-dom": "^16.0.0",
     "style-loader": "^0.18.2",
     "webpack": "^3.2.0",
     "webpack-bundle-size-analyzer": "^2.7.0",
     "webpack-dev-server": "^2.5.1"
   },
   "peerDependencies": {
-    "react": "^15.6.1"
+    "react": "^16.0.0"
   },
   "dependencies": {
     "classnames": "^2.2.5",
     "create-react-context": "^0.2.1",
     "immutable": "^3.8.1",
-    "isomorphic-fetch": "^2.2.1",
-    "json-fetch": "^7.2.0",
     "prop-types": "^15.5.10",
     "react-bootstrap4-modal": "^1.2.2",
     "react-dnd": "^2.4.0",
     "react-dnd-html5-backend": "^2.4.1",
     "react-dnd-multi-backend": "^2.3.7",
     "react-html-id": "^0.1.1",
-    "react-immutable-proptypes": "^2.1.0"
+    "react-immutable-proptypes": "^2.1.0",
+    "unfetch": "^3.0.0"
   }
 }
