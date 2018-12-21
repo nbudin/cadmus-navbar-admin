@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import ImmutablePropTypes from 'react-immutable-proptypes';
 
 export const NavigationItemPropType = PropTypes.shape({
   id: PropTypes.number,
@@ -10,8 +9,7 @@ export const NavigationItemPropType = PropTypes.shape({
 });
 
 export const NavigationItemStorePropType = PropTypes.shape({
-  navigationItems: ImmutablePropTypes.mapOf(
+  navigationItems: PropTypes.objectOf(
     NavigationItemPropType.isRequired,
-    PropTypes.number.isRequired,
   ).isRequired,
 });

@@ -50,14 +50,12 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "create-react-context": "^0.2.1",
-    "immutable": "^3.8.1",
     "prop-types": "^15.5.10",
     "react-bootstrap4-modal": "^1.2.2",
     "react-dnd": "^2.4.0",
     "react-dnd-html5-backend": "^2.4.1",
     "react-dnd-multi-backend": "^2.3.7",
     "react-html-id": "^0.1.1",
-    "react-immutable-proptypes": "^2.1.0",
     "unfetch": "^3.0.0"
   }
 }
