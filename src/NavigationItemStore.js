@@ -1,25 +1,26 @@
-import { Map } from 'immutable';
-
 function sortNavigationItems(navigationItems) {
-  return navigationItems.sortBy(item => item.position);
+  return navigationItems.sort((a, b) => a.position - b.position);
 }
 
 export default class NavigationItemStore {
   constructor(navigationItems) {
-    if (Map.isMap(navigationItems)) {
-      this.navigationItems = navigationItems;
+    if (Array.isArray(navigationItems)) {
+      this.navigationItems = navigationItems.reduce((navigationItemsById, item) => ({
+        ...navigationItemsById,
+        [item.id]: item,
+      }), {});
     } else {
-      this.navigationItems = new Map(navigationItems.map(item => [item.id, item]));
+      this.navigationItems = navigationItems;
     }
   }
 
   get(id) {
-    return this.navigationItems.get(id);
+    return this.navigationItems[id];
   }
 
   getRoots() {
     return sortNavigationItems(
-      this.navigationItems.valueSeq().filter(
+      Object.values(this.navigationItems).filter(
         navigationItem => !navigationItem.navigation_section_id,
       ),
     );
@@ -31,62 +32,70 @@ export default class NavigationItemStore {
     }
 
     return sortNavigationItems(
-      this.navigationItems.valueSeq().filter(
+      Object.values(this.navigationItems).filter(
         navigationItem => navigationItem.navigation_section_id === navigationSectionId,
       ),
     );
   }
 
   map(...args) {
-    return this.navigationItems.valueSeq().map(...args);
+    return Object.values(this.navigationItems).map(...args);
   }
 
   add(navigationItem) {
-    return new NavigationItemStore(this.navigationItems.set(navigationItem.id, navigationItem));
+    return new NavigationItemStore({
+      ...this.navigationItems,
+      [navigationItem.id]: navigationItem,
+    });
   }
 
   update(id, updater) {
-    const updatedItem = updater(this.get(id));
-    return new NavigationItemStore(this.navigationItems.set(id, updatedItem));
+    return new NavigationItemStore({ ...this.navigationItems, [id]: updater(this.get(id)) });
   }
 
   delete(id) {
-    return new NavigationItemStore(this.navigationItems.delete(id));
+    const newItems = { ...this.navigationItems };
+    delete newItems[id];
+    return new NavigationItemStore(newItems);
   }
 
   reposition(id, newNavigationSectionId, newPosition) {
     const item = this.get(id);
     const itemsInSection = this.getNavigationItemsInSection(newNavigationSectionId).filter(
       sectionItem => sectionItem.id !== item.id,
-    ).toList();
+    );
 
     let insertIndex = itemsInSection.findIndex(sectionItem => sectionItem.position >= newPosition);
     if (insertIndex === -1) {
-      insertIndex = itemsInSection.size;
+      insertIndex = itemsInSection.length;
     }
 
-    const newItems = itemsInSection.insert(insertIndex, {
+    const newItems = [...itemsInSection];
+    newItems.splice(insertIndex, 0, {
       ...item,
       navigation_section_id: newNavigationSectionId,
     });
-    const newItemsWithPositions = newItems.map((newItem, index) => (
-      { ...newItem, position: index + 1 }
+    const newItemsWithPositions = newItems.map((newItem, index) => ({
+      ...newItem,
+      position: index + 1,
+    }));
+    return new NavigationItemStore(newItemsWithPositions.reduce(
+      (acc, newItem) => ({ ...acc, [newItem.id]: newItem }),
+      this.navigationItems,
     ));
-    const newItemsMap = new Map(newItemsWithPositions.map(newItem => [newItem.id, newItem]));
-
-    return new NavigationItemStore(this.navigationItems.merge(newItemsMap));
   }
 
   applySort(newNavigationItems) {
-    return new NavigationItemStore(this.navigationItems.withMutations(
-      navigationItems => newNavigationItems.navigationItems.reduce(
-        (result, newNavigationItem) => result.set(newNavigationItem.id, {
-          ...result.get(newNavigationItem.id),
+    return new NavigationItemStore(Object.values(newNavigationItems.navigationItems).reduce(
+      (result, newNavigationItem) => ({
+        ...result,
+        [newNavigationItem.id]: {
+          ...result[newNavigationItem.id],
           position: newNavigationItem.position,
           navigation_section_id: newNavigationItem.navigation_section_id,
-        }),
-        navigationItems,
-      ),
+        },
+      }),
+      this.navigationItems,
     ));
   }
 }
