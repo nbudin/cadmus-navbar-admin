@@ -8,8 +8,6 @@ import { NavigationItemPropType } from '../propTypes';
 import SectionForm from './SectionForm';
 import { withClient } from '../ClientContext';
 
-@withClient
-@navigationItemEditor
 class NavigationItemEditorModal extends React.Component {
   static propTypes = {
     navigationItem: NavigationItemPropType,
@@ -123,4 +121,4 @@ class NavigationItemEditorModal extends React.Component {
   }
 }
 
-export default NavigationItemEditorModal;
+export default withClient(navigationItemEditor(NavigationItemEditorModal));

@@ -11,19 +11,19 @@ function getPlugins() {
         sourceMap: true,
 
         compress: {
-          warnings: false
+          warnings: false,
         },
 
         output: {
-          comments: false
-        }
+          comments: false,
+        },
       }),
 
       new CompressionPlugin({
         asset: '[path].gz[query]',
         algorithm: 'gzip',
-        test: /\.(js|css|html|json|ico|svg|eot|otf|ttf)$/
-      })
+        test: /\.(js|css|html|json|ico|svg|eot|otf|ttf)$/,
+      }),
     ];
   }
 
@@ -33,7 +33,7 @@ function getPlugins() {
 function getExternals() {
   if (env.NODE_ENV === 'production') {
     return {
-      "react": "React"
+      react: 'React',
     };
   }
 
@@ -43,6 +43,8 @@ function getExternals() {
 module.exports = {
   devtool: (env.NODE_ENV === 'development' ? 'cheap-module-eval-source-map' : false),
 
+  mode: (env.NODE_ENV === 'development' ? 'development' : 'production'),
+
   entry: {
     index: 'index',
     RESTClient: 'RESTClient',
@@ -51,12 +53,12 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].js'
+    filename: '[name].js',
   },
 
   resolve: {
     extensions: ['.js', '.jsx'],
-    modules: [path.resolve(__dirname, 'src'), 'node_modules']
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
   },
 
   externals: getExternals(),
@@ -75,19 +77,19 @@ module.exports = {
         use: [
           'style-loader',
           'css-loader',
-        ]
-      }
-    ]
+        ],
+      },
+    ],
   },
 
   plugins: getPlugins(),
 
   devServer: {
     allowedHosts: ['interconr.intercode.test'],
-    contentBase: path.join(__dirname, "public"),
+    contentBase: path.join(__dirname, 'public'),
     proxy: {
       '/cms_navigation_items': { target: 'http://interconr.intercode.test:5000' },
       '/pages': { target: 'http://interconr.intercode.test:5000' },
-    }
-  }
+    },
+  },
 };

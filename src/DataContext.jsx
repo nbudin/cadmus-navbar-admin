@@ -13,7 +13,6 @@ const DataContext = createReactContext({
 
 const DataContextConsumer = DataContext.Consumer;
 
-@withClient
 class DataContextProvider extends React.Component {
   static propTypes = {
     client: PropTypes.shape({
@@ -63,7 +62,9 @@ class DataContextProvider extends React.Component {
   );
 }
 
-export { DataContextProvider };
+const DataContextProviderWithClient = withClient(DataContextProvider);
+
+export { DataContextProviderWithClient as DataContextProvider };
 
 export const withDataContext = WrappedComponent => props => (
   <DataContextConsumer>

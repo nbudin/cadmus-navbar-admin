@@ -4,7 +4,6 @@ import { withDataContext } from '../DataContext';
 import NavigationItem from './NavigationItem';
 import { NavigationItemStorePropType } from '../propTypes';
 
-@withDataContext
 class NavigationItemList extends React.Component {
   static propTypes = {
     navigationItemStore: NavigationItemStorePropType.isRequired,
@@ -40,4 +39,4 @@ class NavigationItemList extends React.Component {
   );
 }
 
-export default NavigationItemList;
+export default withDataContext(NavigationItemList);

@@ -12,10 +12,6 @@ import NavigationItemList from './NavigationItemList';
 import NavigationItemEditorModal from './NavigationItemEditorModal';
 import PreviewNavigationBar from './PreviewNavigationBar';
 
-@withClient
-@withDataContext
-@navigationItemEditingController
-@DragDropContext(MultiBackend(HTML5toTouch))
 class NavbarAdminForm extends React.Component {
   static propTypes = {
     client: PropTypes.shape({
@@ -87,4 +83,12 @@ class NavbarAdminForm extends React.Component {
   }
 }
 
-export default NavbarAdminForm;
+export default withClient(
+  withDataContext(
+    navigationItemEditingController(
+      DragDropContext(MultiBackend(HTML5toTouch))(
+        NavbarAdminForm,
+      ),
+    ),
+  ),
+);

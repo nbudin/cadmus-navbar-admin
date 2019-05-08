@@ -4,7 +4,6 @@ import { enableUniqueIds } from 'react-html-id';
 import { NavigationItemPropType } from '../propTypes';
 import { withDataContext } from '../DataContext';
 
-@withDataContext
 class LinkForm extends React.Component {
   static propTypes = {
     navigationItem: NavigationItemPropType.isRequired,
@@ -97,4 +96,4 @@ class LinkForm extends React.Component {
   }
 }
 
-export default LinkForm;
+export default withDataContext(LinkForm);

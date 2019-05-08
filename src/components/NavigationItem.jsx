@@ -127,11 +127,6 @@ function collectNavigationItemDrop(connect, monitor) {
   };
 }
 
-@withClient
-@withDataContext
-@navigationItemEditingController
-@DragSource('NAVIGATION_ITEM', navigationItemDragSource, collectNavigationItemDrag)
-@DropTarget('NAVIGATION_ITEM', navigationItemDropTarget, collectNavigationItemDrop)
 class NavigationItem extends React.Component {
   static propTypes = {
     navigationItem: NavigationItemPropType.isRequired,
@@ -265,4 +260,14 @@ class NavigationItem extends React.Component {
   }
 }
 
-export default NavigationItem;
+export default withClient(
+  withDataContext(
+    navigationItemEditingController(
+      DragSource('NAVIGATION_ITEM', navigationItemDragSource, collectNavigationItemDrag)(
+        DropTarget('NAVIGATION_ITEM', navigationItemDropTarget, collectNavigationItemDrop)(
+          NavigationItem,
+        ),
+      ),
+    ),
+  ),
+);

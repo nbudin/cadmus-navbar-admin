@@ -5,7 +5,6 @@ import itemType from '../itemType';
 import PreviewLink from './PreviewLink';
 import PreviewSection from './PreviewSection';
 
-@withDataContext
 class PreviewNavigationBar extends React.Component {
   static propTypes = {
     navigationItemStore: PropTypes.shape({
@@ -41,4 +40,4 @@ class PreviewNavigationBar extends React.Component {
   );
 }
 
-export default PreviewNavigationBar;
+export default withDataContext(PreviewNavigationBar);

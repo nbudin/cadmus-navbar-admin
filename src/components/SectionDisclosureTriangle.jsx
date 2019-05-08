@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withDataContext } from '../DataContext';
 
-@withDataContext
 class SectionDisclosureTriangle extends React.Component {
   static propTypes = {
     navigationItemStore: PropTypes.shape({
@@ -46,4 +45,4 @@ class SectionDisclosureTriangle extends React.Component {
   }
 }
 
-export default SectionDisclosureTriangle;
+export default withDataContext(SectionDisclosureTriangle);

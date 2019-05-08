@@ -14,8 +14,7 @@ const EditingNavigationItemContext = createReactContext({
 
 const EditingNavigationItemContextConsumer = EditingNavigationItemContext.Consumer;
 
-@withClient
-export class EditingNavigationItemContextProvider extends React.Component {
+class EditingNavigationItemContextProvider extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     client: PropTypes.shape({
@@ -70,6 +69,12 @@ export class EditingNavigationItemContextProvider extends React.Component {
     </EditingNavigationItemContext.Provider>
   )
 }
+
+const EditingNavigationItemContextProviderWithClient = withClient(
+  EditingNavigationItemContextProvider,
+);
+
+export { EditingNavigationItemContextProviderWithClient as EditingNavigationItemContextProvider };
 
 export const navigationItemEditor = WrappedComponent => props => (
   <EditingNavigationItemContextConsumer>
