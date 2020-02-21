@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import 'babel-polyfill';
 import CadmusNavbarAdmin from '../src/index';
 import RESTClient from '../src/RESTClient';
+import FakeClient from './FakeClient';
 
 class CadmusNavbarAdminWrapper extends React.Component {
   constructor(props) {
@@ -17,6 +18,7 @@ class CadmusNavbarAdminWrapper extends React.Component {
       baseUrl: baseUrl || '',
       pagesUrl: pagesUrl || '',
       gotUrlsFromQueryParams,
+      fakeClient: new FakeClient(),
     };
   }
 
@@ -32,10 +34,17 @@ class CadmusNavbarAdminWrapper extends React.Component {
   }
 
   render = () => {
+    return (
+      <div>
+        <CadmusNavbarAdmin client={this.state.fakeClient} />
+      </div>
+    );
+
     if (this.state.gotUrlsFromQueryParams) {
       const client = new RESTClient({
         baseUrl: this.state.baseUrl,
         pagesUrl: this.state.pagesUrl,
+        disableCORS: true,
       });
 
       return (
