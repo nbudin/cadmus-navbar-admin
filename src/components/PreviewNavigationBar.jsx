@@ -1,31 +1,28 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { withDataContext } from '../DataContext';
+import React, { useContext, useMemo } from 'react';
+import DataContext from '../DataContext';
 import itemType from '../itemType';
 import PreviewLink from './PreviewLink';
 import PreviewSection from './PreviewSection';
 
-class PreviewNavigationBar extends React.Component {
-  static propTypes = {
-    navigationItemStore: PropTypes.shape({
-      getRoots: PropTypes.func.isRequired,
-      getNavigationItemsInSection: PropTypes.func.isRequired,
-    }).isRequired,
-  };
+function PreviewNavigationBar() {
+  const { navigationItemStore } = useContext(DataContext);
 
-  renderNavigationItems = () => (
-    this.props.navigationItemStore.getRoots().map((item) => {
-      const type = itemType(item);
+  const roots = useMemo(
+    () => navigationItemStore.getRoots(),
+    [navigationItemStore],
+  );
 
-      if (type === 'Link') {
-        return <PreviewLink navigationItem={item} key={item.id} />;
-      }
+  const renderNavigationItems = () => roots.map((item) => {
+    const type = itemType(item);
 
-      return <PreviewSection navigationItem={item} key={item.id} />;
-    })
-  )
+    if (type === 'Link') {
+      return <PreviewLink navigationItem={item} key={item.id} />;
+    }
 
-  render = () => (
+    return <PreviewSection navigationItem={item} key={item.id} />;
+  });
+
+  return (
     <nav className="navbar navbar-light bg-faded navbar-toggleable-md mb-4">
       <div className="navbar-brand">
         Preview
@@ -33,11 +30,11 @@ class PreviewNavigationBar extends React.Component {
 
       <div className="collapse navbar-collapse" id="preview-navbar-collapse-1">
         <ul className="nav navbar-nav mr-auto">
-          {this.renderNavigationItems()}
+          {renderNavigationItems()}
         </ul>
       </div>
     </nav>
   );
 }
 
-export default withDataContext(PreviewNavigationBar);
+export default PreviewNavigationBar;

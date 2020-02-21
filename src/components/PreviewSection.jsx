@@ -1,9 +1,10 @@
-import React from 'react';
-import { withDataContext } from '../DataContext';
-import { NavigationItemPropType, NavigationItemStorePropType } from '../propTypes';
+import React, { useContext } from 'react';
+import { NavigationItemPropType } from '../propTypes';
 import PreviewLink from './PreviewLink';
+import DataContext from '../DataContext';
 
-function PreviewSection({ navigationItem, navigationItemStore }) {
+function PreviewSection({ navigationItem }) {
+  const { navigationItemStore } = useContext(DataContext);
   const sectionItems = navigationItemStore
     .getNavigationItemsInSection(navigationItem.id);
   const links = sectionItems.map(item => <PreviewLink navigationItem={item} key={item.id} />);
@@ -22,7 +23,6 @@ function PreviewSection({ navigationItem, navigationItemStore }) {
 
 PreviewSection.propTypes = {
   navigationItem: NavigationItemPropType.isRequired,
-  navigationItemStore: NavigationItemStorePropType.isRequired,
 };
 
-export default withDataContext(PreviewSection);
+export default PreviewSection;
