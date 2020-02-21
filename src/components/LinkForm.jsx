@@ -1,99 +1,97 @@
-import React from 'react';
+import React, { useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { enableUniqueIds } from 'react-html-id';
 import { NavigationItemPropType } from '../propTypes';
-import { withDataContext } from '../DataContext';
+import DataContext from '../DataContext';
+import useUniqueId from '../useUniqueId';
 
-class LinkForm extends React.Component {
-  static propTypes = {
-    navigationItem: NavigationItemPropType.isRequired,
-    pages: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        name: PropTypes.string.isRequired,
-      }).isRequired,
-    ).isRequired,
-    onChange: PropTypes.func.isRequired,
-    onSubmit: PropTypes.func.isRequired,
-  }
+function LinkForm({ navigationItem, onChange, onSubmit }) {
+  const { pages } = useContext(DataContext);
 
-  constructor(props) {
-    super(props);
-    enableUniqueIds(this);
-  }
+  const formSubmitted = useCallback(
+    (event) => {
+      event.preventDefault();
+      onSubmit();
+    },
+    [onSubmit],
+  );
 
-  onSubmit = (event) => {
-    event.preventDefault();
-    this.props.onSubmit();
-  }
+  const pageSelected = useCallback(
+    (event) => {
+      let page = null;
+      if (event.target.value) {
+        page = pages.find(existingPage => (
+          existingPage.id.toString() === event.target.value
+        ));
+      }
 
-  pageSelected = (event) => {
-    let page = null;
-    if (event.target.value) {
-      page = this.props.pages.find(existingPage => (
-        existingPage.id.toString() === event.target.value
+      const currentPage = pages.find(existingPage => (
+        existingPage.id === navigationItem.page_id
       ));
-    }
 
-    const currentPage = this.props.pages.find(existingPage => (
-      existingPage.id === this.props.navigationItem.page_id
-    ));
+      const titleIsBlank = !navigationItem.title;
+      const titleExactlyMatchesPage = (
+        currentPage && navigationItem.title === currentPage.name
+      );
 
-    const titleIsBlank = !this.props.navigationItem.title;
-    const titleExactlyMatchesPage = (
-      currentPage && this.props.navigationItem.title === currentPage.name
-    );
+      const updatedItem = { ...navigationItem };
 
-    const updatedItem = { ...this.props.navigationItem };
+      if (titleIsBlank || titleExactlyMatchesPage) {
+        updatedItem.title = (page ? page.name : '');
+      }
 
-    if (titleIsBlank || titleExactlyMatchesPage) {
-      updatedItem.title = (page ? page.name : '');
-    }
+      updatedItem.page_id = (page ? page.id : null);
+      onChange(updatedItem);
+    },
+    [navigationItem, onChange, pages],
+  );
 
-    updatedItem.page_id = (page ? page.id : null);
-    this.props.onChange(updatedItem);
-  }
+  const titleChanged = useCallback(
+    (event) => {
+      onChange({ ...navigationItem, title: event.target.value });
+    },
+    [navigationItem, onChange],
+  );
 
-  titleChanged = (event) => {
-    this.props.onChange({ ...this.props.navigationItem, title: event.target.value });
-  }
+  const pageId = useUniqueId('page-');
+  const titleId = useUniqueId('title-');
 
-  render = () => {
-    const pageId = this.nextUniqueId();
-    const titleId = this.nextUniqueId();
+  const options = pages.map(page => (
+    <option key={page.id} value={page.id}>{page.name}</option>
+  ));
 
-    const options = this.props.pages.map(page => (
-      <option key={page.id} value={page.id}>{page.name}</option>
-    ));
+  return (
+    <form className="form" onSubmit={formSubmitted}>
+      <div className="form-group">
+        <label htmlFor={pageId}>Page to link to</label>
+        <select
+          id={pageId}
+          className="form-control"
+          onChange={pageSelected}
+          value={navigationItem.page_id || ''}
+        >
+          <option />
+          {options}
+        </select>
+      </div>
 
-    return (
-      <form className="form" onSubmit={this.onSubmit}>
-        <div className="form-group">
-          <label htmlFor={pageId}>Page to link to</label>
-          <select
-            id={pageId}
-            className="form-control"
-            onChange={this.pageSelected}
-            value={this.props.navigationItem.page_id || ''}
-          >
-            <option />
-            {options}
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor={titleId}>Text of link on navigation bar</label>
-          <input
-            id={titleId}
-            type="text"
-            className="form-control"
-            onChange={this.titleChanged}
-            value={this.props.navigationItem.title}
-          />
-        </div>
-      </form>
-    );
-  }
+      <div className="form-group">
+        <label htmlFor={titleId}>Text of link on navigation bar</label>
+        <input
+          id={titleId}
+          type="text"
+          className="form-control"
+          onChange={titleChanged}
+          value={navigationItem.title}
+        />
+      </div>
+    </form>
+  );
 }
 
-export default withDataContext(LinkForm);
+LinkForm.propTypes = {
+  navigationItem: NavigationItemPropType.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+};
+
+export default LinkForm;

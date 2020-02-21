@@ -1,48 +1,43 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { withDataContext } from '../DataContext';
+import DataContext from '../DataContext';
 
-class SectionDisclosureTriangle extends React.Component {
-  static propTypes = {
-    navigationItemStore: PropTypes.shape({
-      get: PropTypes.func.isRequired,
-      update: PropTypes.func.isRequired,
-    }).isRequired,
-    setNavigationItemStore: PropTypes.func.isRequired,
-    navigationSectionId: PropTypes.number.isRequired,
-  }
+function SectionDisclosureTriangle({ navigationSectionId }) {
+  const { navigationItemStore, setNavigationItemStore } = useContext(DataContext);
 
-  toggleExpanded = () => {
-    this.props.setNavigationItemStore(
-      this.props.navigationItemStore.update(
-        this.props.navigationSectionId,
+  const toggleExpanded = () => {
+    setNavigationItemStore(
+      navigationItemStore.update(
+        navigationSectionId,
         section => ({ ...section, expanded: !section.expanded }),
       ),
     );
+  };
+
+  const navigationSection = navigationItemStore.get(navigationSectionId);
+
+  let disclosureTriangle;
+  if (navigationSection.expanded) {
+    disclosureTriangle = '▼';
+  } else {
+    disclosureTriangle = '►';
   }
 
-  render = () => {
-    const navigationSection = this.props.navigationItemStore.get(this.props.navigationSectionId);
-
-    let disclosureTriangle;
-    if (navigationSection.expanded) {
-      disclosureTriangle = '▼';
-    } else {
-      disclosureTriangle = '►';
-    }
-
-    return (
-      <span
-        onClick={this.toggleExpanded}
-        style={{ cursor: 'pointer' }}
-        role="button"
-        aria-pressed={navigationSection.expanded}
-        tabIndex="0"
-      >
-        {disclosureTriangle}
-      </span>
-    );
-  }
+  return (
+    <span
+      onClick={toggleExpanded}
+      style={{ cursor: 'pointer' }}
+      role="button"
+      aria-pressed={navigationSection.expanded}
+      tabIndex="0"
+    >
+      {disclosureTriangle}
+    </span>
+  );
 }
 
-export default withDataContext(SectionDisclosureTriangle);
+SectionDisclosureTriangle.propTypes = {
+  navigationSectionId: PropTypes.number.isRequired,
+};
+
+export default SectionDisclosureTriangle;

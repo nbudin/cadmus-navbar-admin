@@ -1,42 +1,44 @@
-import React from 'react';
+import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { withDataContext } from '../DataContext';
+import DataContext from '../DataContext';
 import NavigationItem from './NavigationItem';
-import { NavigationItemStorePropType } from '../propTypes';
 
-class NavigationItemList extends React.Component {
-  static propTypes = {
-    navigationItemStore: NavigationItemStorePropType.isRequired,
-    navigationSectionId: PropTypes.number,
-  };
+function NavigationItemList({ navigationSectionId }) {
+  const { navigationItemStore } = useContext(DataContext);
 
-  static defaultProps = {
-    navigationSectionId: null,
-  };
+  const navigationItems = useMemo(
+    () => {
+      if (navigationSectionId != null) {
+        return navigationItemStore.getNavigationItemsInSection(navigationSectionId);
+      }
 
-  getNavigationItems = () => {
-    const { navigationItemStore } = this.props;
-    if (this.props.navigationSectionId != null) {
-      return navigationItemStore.getNavigationItemsInSection(this.props.navigationSectionId);
-    }
+      return navigationItemStore.getRoots();
+    },
+    [navigationItemStore, navigationSectionId],
+  );
 
-    return navigationItemStore.getRoots();
-  }
-
-  renderNavigationItems = () => (
-    this.getNavigationItems().map(navigationItem => (
+  const renderNavigationItems = () => (
+    navigationItems.map(navigationItem => (
       <NavigationItem
         key={navigationItem.id}
         navigationItem={navigationItem}
       />
     ))
-  )
+  );
 
-  render = () => (
+  return (
     <ul className="list-group navigation-item-list">
-      {this.renderNavigationItems()}
+      {renderNavigationItems()}
     </ul>
   );
 }
 
-export default withDataContext(NavigationItemList);
+NavigationItemList.propTypes = {
+  navigationSectionId: PropTypes.number,
+};
+
+NavigationItemList.defaultProps = {
+  navigationSectionId: null,
+};
+
+export default NavigationItemList;

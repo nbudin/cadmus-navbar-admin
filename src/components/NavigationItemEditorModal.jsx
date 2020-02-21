@@ -1,50 +1,38 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext, useMemo } from 'react';
 import Modal from 'react-bootstrap4-modal';
 import itemType from '../itemType';
 import LinkForm from './LinkForm';
-import { navigationItemEditor } from '../EditingNavigationItemContext';
-import { NavigationItemPropType } from '../propTypes';
+import EditingNavigationItemContext from '../EditingNavigationItemContext';
 import SectionForm from './SectionForm';
-import { withClient } from '../ClientContext';
+import ClientContext from '../ClientContext';
 
-class NavigationItemEditorModal extends React.Component {
-  static propTypes = {
-    navigationItem: NavigationItemPropType,
-    navigationItemChanged: PropTypes.func.isRequired,
-    saveNavigationItem: PropTypes.func.isRequired,
-    cancelEditingNavigationItem: PropTypes.func.isRequired,
-    client: PropTypes.shape({
-      requestsInProgress: PropTypes.shape({
-        savingNavigationItem: PropTypes.bool,
-      }),
-    }).isRequired,
-  };
+function NavigationItemEditorModal() {
+  const {
+    navigationItem, navigationItemChanged, cancel, save,
+  } = useContext(EditingNavigationItemContext);
+  const client = useContext(ClientContext);
 
-  static defaultProps = {
-    navigationItem: null,
-  };
+  const itemIsValid = useMemo(
+    () => {
+      if (!navigationItem) {
+        return false;
+      }
 
-  itemIsValid = () => {
-    const { navigationItem } = this.props;
+      if (itemType(navigationItem) === 'Link' && !navigationItem.page_id) {
+        return false;
+      }
 
-    if (!navigationItem) {
-      return false;
-    }
+      if (!navigationItem.title || navigationItem.title.trim() === '') {
+        return false;
+      }
 
-    if (itemType(navigationItem) === 'Link' && !navigationItem.page_id) {
-      return false;
-    }
+      return true;
+    },
+    [navigationItem],
+  );
 
-    if (!navigationItem.title || navigationItem.title.trim() === '') {
-      return false;
-    }
-
-    return true;
-  }
-
-  renderTitle = () => {
-    const navigationItemType = itemType(this.props.navigationItem);
+  const renderTitle = () => {
+    const navigationItemType = itemType(navigationItem);
 
     if (navigationItemType === 'Link') {
       return 'Link properties';
@@ -55,23 +43,23 @@ class NavigationItemEditorModal extends React.Component {
     return '';
   };
 
-  renderForm = () => {
-    const navigationItemType = itemType(this.props.navigationItem);
+  const renderForm = () => {
+    const navigationItemType = itemType(navigationItem);
 
     if (navigationItemType === 'Link') {
       return (
         <LinkForm
-          navigationItem={this.props.navigationItem}
-          onSubmit={this.props.saveNavigationItem}
-          onChange={this.props.navigationItemChanged}
+          navigationItem={navigationItem}
+          onSubmit={save}
+          onChange={navigationItemChanged}
         />
       );
     } else if (navigationItemType === 'Section') {
       return (
         <SectionForm
-          navigationItem={this.props.navigationItem}
-          onSubmit={this.props.saveNavigationItem}
-          onChange={this.props.navigationItemChanged}
+          navigationItem={navigationItem}
+          onSubmit={save}
+          onChange={navigationItemChanged}
         />
       );
     }
@@ -79,46 +67,37 @@ class NavigationItemEditorModal extends React.Component {
     return null;
   };
 
-  render = () => {
-    const {
-      navigationItem,
-      saveNavigationItem,
-      cancelEditingNavigationItem,
-      client,
-    } = this.props;
-
-    return (
-      <Modal visible={!!navigationItem} dialogClassName="modal-lg">
-        <div className="modal-header">
-          <h5 className="modal-title">{this.renderTitle()}</h5>
-        </div>
-        <div className="modal-body">
-          {this.renderForm()}
-        </div>
-        <div className="modal-footer">
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={cancelEditingNavigationItem}
-            disabled={client.requestsInProgress.savingNavigationItem}
-          >
-            Cancel
+  return (
+    <Modal visible={!!navigationItem} dialogClassName="modal-lg">
+      <div className="modal-header">
+        <h5 className="modal-title">{renderTitle()}</h5>
+      </div>
+      <div className="modal-body">
+        {renderForm()}
+      </div>
+      <div className="modal-footer">
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={cancel}
+          disabled={client.requestsInProgress.savingNavigationItem}
+        >
+          Cancel
           </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={saveNavigationItem}
-            disabled={
-              client.requestsInProgress.savingNavigationItem ||
-              !this.itemIsValid()
-            }
-          >
-            Save
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={save}
+          disabled={
+            client.requestsInProgress.savingNavigationItem ||
+            !itemIsValid
+          }
+        >
+          Save
           </button>
-        </div>
-      </Modal>
-    );
-  }
+      </div>
+    </Modal>
+  );
 }
 
-export default withClient(navigationItemEditor(NavigationItemEditorModal));
+export default NavigationItemEditorModal;

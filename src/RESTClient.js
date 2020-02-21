@@ -18,19 +18,21 @@ function expectResponseStatuses(statuses) {
   };
 }
 
-function getJSON(url) {
+function getJSON(url, disableCORS) {
   return fetch(url, {
     method: 'GET',
     headers: { Accept: 'application/json' },
     credentials: 'include',
+    mode: disableCORS ? 'no-cors' : 'cors',
   }).then(expectResponseStatuses([200])).then(resp => resp.json());
 }
 
 class APIClient {
-  constructor({ baseUrl, pagesUrl, csrfToken }) {
+  constructor({ baseUrl, pagesUrl, csrfToken, disableCORS }) {
     this.baseUrl = baseUrl;
     this.pagesUrl = pagesUrl;
     this.csrfToken = csrfToken;
+    this.disableCORS = disableCORS;
     this.requestsInProgress = {
       savingNavigationItem: false,
       deletingNavigationItem: false,
@@ -62,7 +64,7 @@ class APIClient {
     this.requestsInProgress.loadingNavigationItems = true;
 
     try {
-      const response = await getJSON(this.baseUrl);
+      const response = await getJSON(this.baseUrl, this.disableCORS);
       this.csrfToken = response.csrf_token;
       return response.navigation_items;
     } catch (error) {
@@ -77,7 +79,7 @@ class APIClient {
     this.requestsInProgress.loadingPages = true;
 
     try {
-      const response = await getJSON(this.pagesUrl);
+      const response = await getJSON(this.pagesUrl, this.disableCORS);
       return response;
     } catch (error) {
       this.onError(error);
@@ -102,6 +104,7 @@ class APIClient {
           'X-CSRF-Token': this.csrfToken,
         },
         body: { navigation_item: navigationItem },
+        mode: this.disableCORS ? 'no-cors' : 'cors',
       }).then(expectResponseStatuses([201, 202])).then(resp => resp.json());
       return response.navigation_item;
     } catch (error) {
@@ -122,6 +125,7 @@ class APIClient {
           'X-CSRF-Token': this.csrfToken,
         },
         credentials: 'include',
+        mode: this.disableCORS ? 'no-cors' : 'cors',
       }).then(expectResponseStatuses([200]));
     } catch (error) {
       this.onError(error);
@@ -150,6 +154,7 @@ class APIClient {
         },
         body: JSON.stringify(payload),
         credentials: 'include',
+        mode: this.disableCORS ? 'no-cors' : 'cors',
       }).then(expectResponseStatuses([200]));
     } catch (error) {
       this.onError(error);

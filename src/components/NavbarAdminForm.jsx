@@ -1,94 +1,70 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext, useRef } from 'react';
+import { DndProvider } from 'react-dnd';
+import HTML5toTouch from 'react-dnd-multi-backend/dist/esm/HTML5toTouch';
 import MultiBackend, { Preview } from 'react-dnd-multi-backend';
-import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch'; // or any other pipeline
-import { DragDropContext } from 'react-dnd';
+
 import AddButton from './AddButton';
-import { withClient } from '../ClientContext';
-import { withDataContext } from '../DataContext';
+import ClientContext from '../ClientContext';
 import NavigationItem from './NavigationItem';
-import { navigationItemEditingController } from '../EditingNavigationItemContext';
+import { useNavigationItemEditing } from '../EditingNavigationItemContext';
 import NavigationItemList from './NavigationItemList';
 import NavigationItemEditorModal from './NavigationItemEditorModal';
 import PreviewNavigationBar from './PreviewNavigationBar';
 
-class NavbarAdminForm extends React.Component {
-  static propTypes = {
-    client: PropTypes.shape({
-      error: PropTypes.string,
-      requestsInProgress: PropTypes.shape({
-        loadingNavigationItems: PropTypes.bool.isRequired,
-        loadingPages: PropTypes.bool.isRequired,
-      }).isRequired,
-    }).isRequired,
-    error: PropTypes.string,
-    newNavigationLink: PropTypes.func.isRequired,
-    newNavigationSection: PropTypes.func.isRequired,
-  };
+function NavbarAdminForm() {
+  const client = useContext(ClientContext);
+  const { newNavigationLink, newNavigationSection } = useNavigationItemEditing();
+  const wrapperDivRef = useRef();
 
-  static defaultProps = {
-    isLoadingNavigationItems: false,
-    isLoadingPages: false,
-    error: null,
-  };
-
-  generatePreview = (type, item, style) => {
+  const generatePreview = (type, item, style) => {
     if (type === 'NAVIGATION_ITEM') {
       return (
-        <div style={{ ...style, width: `${this.wrapperDiv.offsetWidth}px` }}>
+        <div style={{ ...style, width: `${wrapperDivRef.current.offsetWidth}px` }}>
           <NavigationItem navigationItem={item} />
         </div>
       );
     }
 
     return null;
-  }
+  };
 
-  renderError = (error) => {
+  const renderError = (error) => {
     if (error) {
       return <div className="alert alert-danger">{error}</div>;
     }
 
     return null;
+  };
+
+  const { loadingNavigationItems, loadingPages } = client.requestsInProgress;
+  if (loadingNavigationItems || loadingPages) {
+    return (
+      <div>Loading...</div>
+    );
   }
 
-  render = () => {
-    const { loadingNavigationItems, loadingPages } = this.props.client.requestsInProgress;
-    if (loadingNavigationItems || loadingPages) {
-      return (
-        <div>Loading...</div>
-      );
-    }
-
-    return (
-      <div ref={(div) => { this.wrapperDiv = div; }}>
-        {this.renderError(this.props.client.error)}
+  return (
+    <DndProvider backend={MultiBackend} options={HTML5toTouch}>
+      <div ref={wrapperDivRef}>
+        {renderError(client.error)}
 
         <PreviewNavigationBar />
         <NavigationItemList />
 
         <ul className="list-inline mt-2">
           <li className="list-inline-item">
-            <AddButton onClick={this.props.newNavigationSection}>Add section</AddButton>
+            <AddButton onClick={newNavigationSection}>Add section</AddButton>
           </li>
           <li className="list-inline-item">
-            <AddButton onClick={() => { this.props.newNavigationLink(); }}>Add link</AddButton>
+            <AddButton onClick={newNavigationLink}>Add link</AddButton>
           </li>
         </ul>
 
-        <Preview generator={this.generatePreview} />
+        <Preview generator={generatePreview} />
         <NavigationItemEditorModal />
       </div>
-    );
-  }
+    </DndProvider>
+  );
 }
 
-export default withClient(
-  withDataContext(
-    navigationItemEditingController(
-      DragDropContext(MultiBackend(HTML5toTouch))(
-        NavbarAdminForm,
-      ),
-    ),
-  ),
-);
+export default NavbarAdminForm;

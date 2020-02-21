@@ -5,7 +5,7 @@ const AddButton = ({ children, onClick }) => (
   <button type="button" className="btn btn-sm btn-secondary" onClick={onClick}>
     {children}
   </button>
-  );
+);
 
 AddButton.propTypes = {
   onClick: PropTypes.func.isRequired,

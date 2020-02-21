@@ -1,10 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import createReactContext from 'create-react-context';
-import { withClient } from './ClientContext';
-import { withDataContext } from './DataContext';
+import React, { useContext, useCallback } from 'react';
+import DataContext from './DataContext';
 
-const EditingNavigationItemContext = createReactContext({
+const EditingNavigationItemContext = React.createContext({
   navigationItem: null,
   save: () => {},
   cancel: () => {},
@@ -12,115 +9,37 @@ const EditingNavigationItemContext = createReactContext({
   navigationItemChanged: () => {},
 });
 
-const EditingNavigationItemContextConsumer = EditingNavigationItemContext.Consumer;
+export default EditingNavigationItemContext;
 
-class EditingNavigationItemContextProvider extends React.Component {
-  static propTypes = {
-    children: PropTypes.node,
-    client: PropTypes.shape({
-      saveNavigationItem: PropTypes.func.isRequired,
-    }).isRequired,
-  };
+export function useNavigationItemEditing() {
+  const { navigationItemStore, setNavigationItemStore } = useContext(DataContext);
+  const { startEditing } = useContext(EditingNavigationItemContext);
 
-  static defaultProps = {
-    children: null,
-  };
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      navigationItem: null,
-      saveCallback: null,
-    };
-  }
-
-  save = async () => {
-    const response = await this.props.client.saveNavigationItem(this.state.navigationItem);
-    if (this.state.saveCallback) {
-      this.state.saveCallback(response);
-    }
-    this.setState({ navigationItem: null, saveCallback: null });
-    return response;
-  }
-
-  cancel = () => {
-    this.setState({ navigationItem: null, saveCallback: null });
-  }
-
-  startEditing = (initialNavigationItem, saveCallback) => {
-    this.setState({ navigationItem: initialNavigationItem, saveCallback });
-  }
-
-  navigationItemChanged = (navigationItem) => {
-    this.setState({ navigationItem });
-  }
-
-  render = () => (
-    <EditingNavigationItemContext.Provider
-      value={{
-        navigationItem: this.state.navigationItem,
-        save: this.save,
-        cancel: this.cancel,
-        startEditing: this.startEditing,
-        navigationItemChanged: this.navigationItemChanged,
-      }}
-    >
-      {this.props.children}
-    </EditingNavigationItemContext.Provider>
-  )
-}
-
-const EditingNavigationItemContextProviderWithClient = withClient(
-  EditingNavigationItemContextProvider,
-);
-
-export { EditingNavigationItemContextProviderWithClient as EditingNavigationItemContextProvider };
-
-export const navigationItemEditor = WrappedComponent => props => (
-  <EditingNavigationItemContextConsumer>
-    {({ navigationItem, save, cancel, navigationItemChanged }) => (
-      <WrappedComponent
-        {...props}
-        navigationItem={navigationItem}
-        saveNavigationItem={save}
-        cancelEditingNavigationItem={cancel}
-        navigationItemChanged={navigationItemChanged}
-      />
-    )}
-  </EditingNavigationItemContextConsumer>
-);
-
-export const navigationItemEditingController = WrappedComponent => withDataContext(
-  class extends React.Component {
-    static propTypes = {
-      setNavigationItemStore: PropTypes.func.isRequired,
-      navigationItemStore: PropTypes.shape({
-        update: PropTypes.func.isRequired,
-        add: PropTypes.func.isRequired,
-      }),
-    }
-
-    editNavigationItem = (startEditing, navigationItem) => {
+  const editNavigationItem = useCallback(
+    (navigationItem) => {
       startEditing(
         navigationItem,
         (newItem) => {
-          this.props.setNavigationItemStore(
-            this.props.navigationItemStore.update(
-              newItem.id,
-              () => newItem,
-            ),
+          setNavigationItemStore(
+            navigationItemStore.update(newItem.id, () => newItem),
           );
         },
       );
-    }
+    },
+    [navigationItemStore, setNavigationItemStore, startEditing],
+  );
 
-    navigationItemCreated = (createdItem) => {
-      this.props.setNavigationItemStore(
-        this.props.navigationItemStore.add(createdItem),
+  const navigationItemCreated = useCallback(
+    (createdItem) => {
+      setNavigationItemStore(
+        navigationItemStore.add(createdItem),
       );
-    }
+    },
+    [setNavigationItemStore, navigationItemStore],
+  );
 
-    newNavigationLink = (startEditing, navigationSectionId) => {
+  const newNavigationLink = useCallback(
+    (navigationSectionId) => {
       startEditing(
         {
           id: null,
@@ -129,38 +48,27 @@ export const navigationItemEditingController = WrappedComponent => withDataConte
           title: '',
           page_id: null,
         },
-        this.navigationItemCreated,
+        navigationItemCreated,
       );
-    }
+    },
+    [startEditing, navigationItemCreated],
+  );
 
-    newNavigationSection = (startEditing) => {
+  const newNavigationSection = useCallback(
+    () => {
       startEditing(
         {
           id: null,
           type: 'section',
           title: '',
         },
-        this.navigationItemCreated,
+        navigationItemCreated,
       );
-    }
+    },
+    [startEditing, navigationItemCreated],
+  );
 
-    render = () => (
-      <EditingNavigationItemContextConsumer>
-        {({ startEditing }) => (
-          <WrappedComponent
-            {...this.props}
-            editNavigationItem={
-              (navigationItem) => { this.editNavigationItem(startEditing, navigationItem); }
-            }
-            newNavigationLink={
-              (navigationSectionId) => {
-                this.newNavigationLink(startEditing, navigationSectionId);
-              }
-            }
-            newNavigationSection={() => { this.newNavigationSection(startEditing); }}
-          />
-        )}
-      </EditingNavigationItemContextConsumer>
-    )
-  },
-);
+  return {
+    editNavigationItem, newNavigationLink, newNavigationSection,
+  };
+}

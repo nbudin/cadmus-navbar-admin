@@ -1,47 +1,46 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { enableUniqueIds } from 'react-html-id';
 import { NavigationItemPropType } from '../propTypes';
+import useUniqueId from '../useUniqueId';
 
-class SectionForm extends React.Component {
-  static propTypes = {
-    navigationItem: NavigationItemPropType.isRequired,
-    onChange: PropTypes.func.isRequired,
-    onSubmit: PropTypes.func.isRequired,
-  }
+function SectionForm({ navigationItem, onChange, onSubmit }) {
+  const formSubmitted = useCallback(
+    (event) => {
+      event.preventDefault();
+      onSubmit();
+    },
+    [onSubmit],
+  );
 
-  constructor(props) {
-    super(props);
-    enableUniqueIds(this);
-  }
+  const titleChanged = useCallback(
+    (event) => {
+      onChange({ ...navigationItem, title: event.target.value });
+    },
+    [navigationItem, onChange],
+  );
 
-  onSubmit = (event) => {
-    event.preventDefault();
-    this.props.onSubmit();
-  }
+  const titleId = useUniqueId('title-');
 
-  titleChanged = (event) => {
-    this.props.onChange({ ...this.props.navigationItem, title: event.target.value });
-  }
-
-  render = () => {
-    const titleId = this.nextUniqueId();
-
-    return (
-      <form className="form" onSubmit={this.onSubmit}>
-        <div className="form-group">
-          <label htmlFor="titleId">Title</label>
-          <input
-            id={titleId}
-            type="text"
-            className="form-control"
-            onChange={this.titleChanged}
-            value={this.props.navigationItem.title}
-          />
-        </div>
-      </form>
-    );
-  }
+  return (
+    <form className="form" onSubmit={formSubmitted}>
+      <div className="form-group">
+        <label htmlFor="titleId">Title</label>
+        <input
+          id={titleId}
+          type="text"
+          className="form-control"
+          onChange={titleChanged}
+          value={navigationItem.title}
+        />
+      </div>
+    </form>
+  );
 }
+
+SectionForm.propTypes = {
+  navigationItem: NavigationItemPropType.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+};
 
 export default SectionForm;
