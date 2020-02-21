@@ -58,6 +58,6 @@
     "react-dnd-html5-backend": "^10.0.2",
     "react-dnd-multi-backend": "^5.0.0",
     "react-dnd-touch-backend": "^10.0.2",
-    "unfetch": "^3.0.0"
+    "unfetch": "^4.1.0"
   }
 }
