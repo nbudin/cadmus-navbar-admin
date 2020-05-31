@@ -1,7 +1,6 @@
 import React, { useContext, useRef } from 'react';
-import { DndProvider } from 'react-dnd';
 import HTML5toTouch from 'react-dnd-multi-backend/dist/esm/HTML5toTouch';
-import MultiBackend, { Preview } from 'react-dnd-multi-backend';
+import { DndProvider, Preview } from 'react-dnd-multi-backend';
 
 import AddButton from './AddButton';
 import ClientContext from '../ClientContext';
@@ -44,7 +43,7 @@ function NavbarAdminForm() {
   }
 
   return (
-    <DndProvider backend={MultiBackend} options={HTML5toTouch}>
+    <DndProvider options={HTML5toTouch}>
       <div ref={wrapperDivRef}>
         {renderError(client.error)}
 
