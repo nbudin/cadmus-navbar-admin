@@ -196,8 +196,8 @@ function NavigationItem({ navigationItem }) {
           className="btn btn-secondary btn-sm"
           onClick={editNavigationItemClicked}
         >
-            Edit
-          </button>
+          Edit
+        </button>
         {' '}
         <button type="button" className="btn btn-danger btn-sm" onClick={onClickDelete}>Delete</button>
       </div>
