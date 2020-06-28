@@ -55,7 +55,7 @@ function NavbarAdminForm() {
             <AddButton onClick={newNavigationSection}>Add section</AddButton>
           </li>
           <li className="list-inline-item">
-            <AddButton onClick={newNavigationLink}>Add link</AddButton>
+            <AddButton onClick={() => newNavigationLink(null)}>Add link</AddButton>
           </li>
         </ul>
 
