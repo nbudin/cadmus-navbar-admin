@@ -8,14 +8,13 @@
   "license": "MIT",
   "files": [
     "dist/index.*",
-    "lib",
-    "src"
+    "lib"
   ],
   "scripts": {
     "test": "npm run lint",
     "build": "npm run build:lib && npm run build:dist",
-    "build:lib": "babel src --out-dir lib --copy-files",
-    "build:dist": "webpack --config webpack.config.js --progress",
+    "build:dist": "rm -rf dist/* && tsc --outDir dist/ --module commonjs",
+    "build:lib": "rm -rf lib/* && tsc --outDir lib/",
     "prepare": "npm run build",
     "lint": "eslint --ext .js --ext .jsx src",
     "lint:fix": "eslint --ext .js --ext .jsx src --fix",
