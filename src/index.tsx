@@ -7,7 +7,6 @@ import EditingNavigationItemContext, {
 } from './EditingNavigationItemContext';
 import NavbarAdminForm from './components/NavbarAdminForm';
 import NavigationItemStore from './NavigationItemStore';
-import './styles/cadmus-navbar-admin.css';
 import { CadmusNavbarAdminClient } from './CadmusNavbarAdminClient';
 import { NavigationItem } from './NavigationItem';
 

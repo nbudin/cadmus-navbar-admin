@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom';
 
 import CadmusNavbarAdmin from '../src/index';
 import FakeClient from './FakeClient';
+import '../styles/cadmus-navbar-admin.css';
 
 const client = new FakeClient();
 
