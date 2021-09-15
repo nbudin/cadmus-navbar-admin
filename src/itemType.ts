@@ -7,7 +7,7 @@ function itemType(
     return undefined;
   }
 
-  if (item.page_id != null || item.navigation_section_id != null) {
+  if (item.page_id != null) {
     return 'Link';
   }
   return 'Section';

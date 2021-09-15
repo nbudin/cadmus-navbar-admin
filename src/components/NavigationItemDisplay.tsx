@@ -1,6 +1,6 @@
 import { useContext, useRef, useCallback, useState } from 'react';
 import classNames from 'classnames';
-import { useDrag, useDrop } from 'react-dnd';
+import { DropTargetMonitor, useDrag, useDrop } from 'react-dnd';
 import { ConfirmModal } from 'react-bootstrap4-modal';
 import itemType from '../itemType';
 import AddButton from './AddButton';
@@ -72,7 +72,8 @@ function NavigationItemDisplay({ navigationItem }: NavigationItemDisplayProps): 
   );
 
   const [{ isDragging }, drag, preview] = useDrag({
-    item: { navigationItem, type: 'NAVIGATION_ITEM' },
+    type: 'NAVIGATION_ITEM',
+    item: { navigationItem },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -80,7 +81,7 @@ function NavigationItemDisplay({ navigationItem }: NavigationItemDisplayProps): 
 
   const [, drop] = useDrop({
     accept: 'NAVIGATION_ITEM',
-    drop: (_props, monitor) => {
+    drop: (_props, monitor: DropTargetMonitor<{ navigationItem: NavigationItem }>) => {
       if (!monitor.canDrop()) {
         return;
       }
@@ -101,7 +102,7 @@ function NavigationItemDisplay({ navigationItem }: NavigationItemDisplayProps): 
         onMoveNavigationItemOnto(dragItem);
       }
     },
-    hover: (props, monitor) => {
+    hover: (props, monitor: DropTargetMonitor<{ navigationItem: NavigationItem }>) => {
       const dragItem = monitor.getItem().navigationItem;
 
       if (
@@ -112,7 +113,7 @@ function NavigationItemDisplay({ navigationItem }: NavigationItemDisplayProps): 
         expandNavigationItem(props);
       }
     },
-    canDrop: (_props, monitor) => {
+    canDrop: (_props, monitor: DropTargetMonitor<{ navigationItem: NavigationItem }>) => {
       const dragItem = monitor.getItem().navigationItem;
       const dragItemType = itemType(dragItem);
       const myItemType = itemType(navigationItem);
@@ -146,7 +147,10 @@ function NavigationItemDisplay({ navigationItem }: NavigationItemDisplayProps): 
   };
 
   const editNavigationItemClicked = () => {
-    editNavigationItem(navigationItem);
+    editNavigationItem({
+      ...navigationItem,
+      type: navigationItem.page_id == null ? 'section' : 'link',
+    });
   };
   const newLinkClicked = () => {
     newNavigationLink(navigationItem.id);
