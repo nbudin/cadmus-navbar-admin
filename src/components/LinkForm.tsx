@@ -1,10 +1,19 @@
-import React, { useCallback, useContext } from 'react';
-import PropTypes from 'prop-types';
-import { NavigationItemPropType } from '../propTypes';
+import { useCallback, useContext } from 'react';
 import DataContext from '../DataContext';
 import useUniqueId from '../useUniqueId';
+import { EditingNavigationItem } from '../EditingNavigationItemContext';
 
-function LinkForm({ navigationItem, onChange, onSubmit }) {
+export type LinkFormProps = {
+  navigationItem: EditingNavigationItem;
+  onChange: React.Dispatch<EditingNavigationItem>;
+  onSubmit: () => void;
+};
+
+export default function LinkForm({
+  navigationItem,
+  onChange,
+  onSubmit,
+}: LinkFormProps): JSX.Element {
   const { pages } = useContext(DataContext);
 
   const formSubmitted = useCallback(
@@ -19,27 +28,21 @@ function LinkForm({ navigationItem, onChange, onSubmit }) {
     (event) => {
       let page = null;
       if (event.target.value) {
-        page = pages.find(existingPage => (
-          existingPage.id.toString() === event.target.value
-        ));
+        page = pages.find((existingPage) => existingPage.id.toString() === event.target.value);
       }
 
-      const currentPage = pages.find(existingPage => (
-        existingPage.id === navigationItem.page_id
-      ));
+      const currentPage = pages.find((existingPage) => existingPage.id === navigationItem.page_id);
 
       const titleIsBlank = !navigationItem.title;
-      const titleExactlyMatchesPage = (
-        currentPage && navigationItem.title === currentPage.name
-      );
+      const titleExactlyMatchesPage = currentPage && navigationItem.title === currentPage.name;
 
       const updatedItem = { ...navigationItem };
 
       if (titleIsBlank || titleExactlyMatchesPage) {
-        updatedItem.title = (page ? page.name : '');
+        updatedItem.title = page ? page.name : '';
       }
 
-      updatedItem.page_id = (page ? page.id : null);
+      updatedItem.page_id = page?.id;
       onChange(updatedItem);
     },
     [navigationItem, onChange, pages],
@@ -55,8 +58,10 @@ function LinkForm({ navigationItem, onChange, onSubmit }) {
   const pageId = useUniqueId('page-');
   const titleId = useUniqueId('title-');
 
-  const options = pages.map(page => (
-    <option key={page.id} value={page.id}>{page.name}</option>
+  const options = pages.map((page) => (
+    <option key={page.id} value={page.id}>
+      {page.name}
+    </option>
   ));
 
   return (
@@ -87,11 +92,3 @@ function LinkForm({ navigationItem, onChange, onSubmit }) {
     </form>
   );
 }
-
-LinkForm.propTypes = {
-  navigationItem: NavigationItemPropType.isRequired,
-  onChange: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-};
-
-export default LinkForm;

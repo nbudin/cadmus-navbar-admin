@@ -41,9 +41,9 @@ function getExternals() {
 }
 
 module.exports = {
-  devtool: (env.NODE_ENV === 'development' ? 'cheap-module-eval-source-map' : false),
+  devtool: env.NODE_ENV === 'development' ? 'eval-cheap-module-source-map' : false,
 
-  mode: (env.NODE_ENV === 'development' ? 'development' : 'production'),
+  mode: env.NODE_ENV === 'development' ? 'development' : 'production',
 
   entry: {
     index: 'index',
@@ -57,7 +57,7 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
     modules: [path.resolve(__dirname, 'src'), 'node_modules'],
   },
 
@@ -67,17 +67,14 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/i,
+        test: /\.[tj]sx?$/i,
         include: [path.resolve(__dirname, 'src'), path.resolve(__dirname, 'dev-server-bundle')],
         loader: 'babel-loader',
       },
       {
         test: /\.css$/i,
         include: [path.resolve(__dirname, 'src')],
-        use: [
-          'style-loader',
-          'css-loader',
-        ],
+        use: ['style-loader', 'css-loader'],
       },
     ],
   },
@@ -86,7 +83,7 @@ module.exports = {
 
   devServer: {
     allowedHosts: ['interconr.intercode.test'],
-    contentBase: path.join(__dirname, 'public'),
+    static: path.join(__dirname, 'public'),
     proxy: {
       '/cms_navigation_items': { target: 'http://interconr.intercode.test:5000' },
       '/pages': { target: 'http://interconr.intercode.test:5000' },

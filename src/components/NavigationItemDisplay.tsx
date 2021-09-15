@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useCallback, useState } from 'react';
+import { useContext, useRef, useCallback, useState } from 'react';
 import classNames from 'classnames';
 import { useDrag, useDrop } from 'react-dnd';
 import { ConfirmModal } from 'react-bootstrap4-modal';
@@ -6,25 +6,29 @@ import itemType from '../itemType';
 import AddButton from './AddButton';
 import { useNavigationItemEditing } from '../EditingNavigationItemContext';
 import NavigationItemList from './NavigationItemList';
-import { NavigationItemPropType } from '../propTypes';
+import { NavigationItem, NavigationItemPropType } from '../NavigationItem';
 import SectionDisclosureTriangle from './SectionDisclosureTriangle';
 import ClientContext from '../ClientContext';
 import DataContext from '../DataContext';
 
-function NavigationItem({ navigationItem }) {
+export type NavigationItemDisplayProps = {
+  navigationItem: NavigationItem;
+};
+
+function NavigationItemDisplay({ navigationItem }: NavigationItemDisplayProps): JSX.Element {
   const { navigationItemStore, setNavigationItemStore } = useContext(DataContext);
   const { editNavigationItem, newNavigationLink } = useNavigationItemEditing();
   const client = useContext(ClientContext);
-  const ref = useRef();
+  const ref = useRef<HTMLLIElement>(null);
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
   const expandNavigationItem = useCallback(
     (props) => {
       setNavigationItemStore(
-        navigationItemStore.update(
-          props.navigationItem.id,
-          item => ({ ...item, expanded: true }),
-        ),
+        navigationItemStore.update(props.navigationItem.id, (item) => ({
+          ...item,
+          expanded: true,
+        })),
       );
     },
     [navigationItemStore, setNavigationItemStore],
@@ -33,8 +37,8 @@ function NavigationItem({ navigationItem }) {
   const onMoveNavigationItemOnto = useCallback(
     async (movedItem) => {
       const myItem = navigationItem;
-      const sameSection = (movedItem.navigation_section_id === myItem.navigation_section_id);
-      const movingDown = (sameSection && movedItem.position < myItem.position);
+      const sameSection = movedItem.navigation_section_id === myItem.navigation_section_id;
+      const movingDown = sameSection && movedItem.position < myItem.position;
 
       let newNavigationItems;
       if (movingDown) {
@@ -52,32 +56,24 @@ function NavigationItem({ navigationItem }) {
       }
 
       await client.sortNavigationItems(newNavigationItems);
-      setNavigationItemStore(
-        navigationItemStore.applySort(newNavigationItems),
-      );
+      setNavigationItemStore(navigationItemStore.applySort(newNavigationItems));
     },
     [client, setNavigationItemStore, navigationItemStore, navigationItem],
   );
 
   const onMoveNavigationItemInto = useCallback(
     async (movedItem) => {
-      const newNavigationItems = navigationItemStore.reposition(
-        movedItem.id,
-        navigationItem.id,
-        1,
-      );
+      const newNavigationItems = navigationItemStore.reposition(movedItem.id, navigationItem.id, 1);
 
       await client.sortNavigationItems(newNavigationItems);
-      setNavigationItemStore(
-        navigationItemStore.applySort(newNavigationItems),
-      );
+      setNavigationItemStore(navigationItemStore.applySort(newNavigationItems));
     },
     [client, navigationItem, navigationItemStore, setNavigationItemStore],
   );
 
   const [{ isDragging }, drag, preview] = useDrag({
     item: { navigationItem, type: 'NAVIGATION_ITEM' },
-    collect: monitor => ({
+    collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
   });
@@ -95,7 +91,11 @@ function NavigationItem({ navigationItem }) {
         return;
       }
 
-      if (itemType(navigationItem) === 'Section' && itemType(dragItem) === 'Link' && navigationItem.expanded) {
+      if (
+        itemType(navigationItem) === 'Section' &&
+        itemType(dragItem) === 'Link' &&
+        navigationItem.expanded
+      ) {
         onMoveNavigationItemInto(dragItem);
       } else {
         onMoveNavigationItemOnto(dragItem);
@@ -104,7 +104,11 @@ function NavigationItem({ navigationItem }) {
     hover: (props, monitor) => {
       const dragItem = monitor.getItem().navigationItem;
 
-      if (itemType(navigationItem) === 'Section' && itemType(dragItem) === 'Link' && !navigationItem.expanded) {
+      if (
+        itemType(navigationItem) === 'Section' &&
+        itemType(dragItem) === 'Link' &&
+        !navigationItem.expanded
+      ) {
         expandNavigationItem(props);
       }
     },
@@ -128,8 +132,12 @@ function NavigationItem({ navigationItem }) {
     },
   });
 
-  const onClickDelete = () => { setIsConfirmingDelete(true); };
-  const cancelDelete = () => { setIsConfirmingDelete(false); };
+  const onClickDelete = () => {
+    setIsConfirmingDelete(true);
+  };
+  const cancelDelete = () => {
+    setIsConfirmingDelete(false);
+  };
   const confirmDelete = async () => {
     await client.deleteNavigationItem(navigationItem);
 
@@ -137,8 +145,12 @@ function NavigationItem({ navigationItem }) {
     setNavigationItemStore(newStore);
   };
 
-  const editNavigationItemClicked = () => { editNavigationItem(navigationItem); };
-  const newLinkClicked = () => { newNavigationLink(navigationItem.id); };
+  const editNavigationItemClicked = () => {
+    editNavigationItem(navigationItem);
+  };
+  const newLinkClicked = () => {
+    newNavigationLink(navigationItem.id);
+  };
 
   const renderDisclosureTriangle = () => {
     if (itemType(navigationItem) !== 'Section') {
@@ -147,18 +159,13 @@ function NavigationItem({ navigationItem }) {
 
     return (
       <span>
-        <SectionDisclosureTriangle navigationSectionId={navigationItem.id} />
-        {' '}
+        <SectionDisclosureTriangle navigationSectionId={navigationItem.id} />{' '}
       </span>
     );
   };
 
   const renderConfirmDelete = () => (
-    <ConfirmModal
-      visible={isConfirmingDelete}
-      onCancel={cancelDelete}
-      onOK={confirmDelete}
-    >
+    <ConfirmModal visible={isConfirmingDelete} onCancel={cancelDelete} onOK={confirmDelete}>
       Are you sure you want to delete {navigationItem.title} from the navigation bar?
     </ConfirmModal>
   );
@@ -173,9 +180,7 @@ function NavigationItem({ navigationItem }) {
         <NavigationItemList navigationSectionId={navigationItem.id} />
         <ul className="list-inline mt-2">
           <li className="list-inline-item">
-            <AddButton onClick={newLinkClicked}>
-              Add link
-            </AddButton>
+            <AddButton onClick={newLinkClicked}>Add link</AddButton>
           </li>
         </ul>
       </div>
@@ -186,9 +191,7 @@ function NavigationItem({ navigationItem }) {
     <div className="row w-100">
       <div className="col">
         {renderDisclosureTriangle()}
-        <strong>{itemType(navigationItem)}:</strong>
-        {' '}
-        {navigationItem.title}
+        <strong>{itemType(navigationItem)}:</strong> {navigationItem.title}
       </div>
       <div className="col text-right">
         <button
@@ -197,9 +200,10 @@ function NavigationItem({ navigationItem }) {
           onClick={editNavigationItemClicked}
         >
           Edit
+        </button>{' '}
+        <button type="button" className="btn btn-danger btn-sm" onClick={onClickDelete}>
+          Delete
         </button>
-        {' '}
-        <button type="button" className="btn btn-danger btn-sm" onClick={onClickDelete}>Delete</button>
       </div>
     </div>
   );
@@ -215,8 +219,8 @@ function NavigationItem({ navigationItem }) {
   );
 }
 
-NavigationItem.propTypes = {
+NavigationItemDisplay.NavigationItem = {
   navigationItem: NavigationItemPropType.isRequired,
 };
 
-export default NavigationItem;
+export default NavigationItemDisplay;

@@ -1,51 +1,54 @@
-import React, { useContext, useRef } from 'react';
+import { useContext, useRef, useState, useEffect } from 'react';
 import HTML5toTouch from 'react-dnd-multi-backend/dist/esm/HTML5toTouch';
 import { DndProvider, Preview } from 'react-dnd-multi-backend';
 
 import AddButton from './AddButton';
 import ClientContext from '../ClientContext';
-import NavigationItem from './NavigationItem';
+import NavigationItemDisplay from './NavigationItemDisplay';
 import { useNavigationItemEditing } from '../EditingNavigationItemContext';
 import NavigationItemList from './NavigationItemList';
 import NavigationItemEditorModal from './NavigationItemEditorModal';
 import PreviewNavigationBar from './PreviewNavigationBar';
+import { CSSProperties } from 'hoist-non-react-statics/node_modules/@types/react';
+import { NavigationItem } from '../NavigationItem';
 
-function NavbarAdminForm() {
+type NavigationDragItem = {
+  type: string;
+  item: NavigationItem;
+  style: Partial<CSSProperties>;
+};
+
+export default function NavbarAdminForm(): JSX.Element {
   const client = useContext(ClientContext);
   const { newNavigationLink, newNavigationSection } = useNavigationItemEditing();
-  const wrapperDivRef = useRef();
+  const wrapperDivRef = useRef<HTMLDivElement>(null);
+  const [error, setError] = useState<Error>();
 
-  const generatePreview = (type, item, style) => {
+  useEffect(() => {
+    client.addErrorSubscriber((err) => setError(err));
+  }, [client]);
+
+  const generatePreview = ({ type, item, style }: NavigationDragItem) => {
     if (type === 'NAVIGATION_ITEM') {
       return (
-        <div style={{ ...style, width: `${wrapperDivRef.current.offsetWidth}px` }}>
-          <NavigationItem navigationItem={item} />
+        <div style={{ ...style, width: `${wrapperDivRef.current?.offsetWidth}px` }}>
+          <NavigationItemDisplay navigationItem={item} />
         </div>
       );
     }
 
-    return null;
-  };
-
-  const renderError = (error) => {
-    if (error) {
-      return <div className="alert alert-danger">{error}</div>;
-    }
-
-    return null;
+    return <></>;
   };
 
   const { loadingNavigationItems, loadingPages } = client.requestsInProgress;
   if (loadingNavigationItems || loadingPages) {
-    return (
-      <div>Loading...</div>
-    );
+    return <div>Loading...</div>;
   }
 
   return (
     <DndProvider options={HTML5toTouch}>
       <div ref={wrapperDivRef}>
-        {renderError(client.error)}
+        {error && <div className="alert alert-danger">{error.message}</div>}
 
         <PreviewNavigationBar />
         <NavigationItemList />
@@ -55,7 +58,7 @@ function NavbarAdminForm() {
             <AddButton onClick={newNavigationSection}>Add section</AddButton>
           </li>
           <li className="list-inline-item">
-            <AddButton onClick={() => newNavigationLink(null)}>Add link</AddButton>
+            <AddButton onClick={() => newNavigationLink(undefined)}>Add link</AddButton>
           </li>
         </ul>
 
@@ -65,5 +68,3 @@ function NavbarAdminForm() {
     </DndProvider>
   );
 }
-
-export default NavbarAdminForm;

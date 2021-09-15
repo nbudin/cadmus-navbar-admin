@@ -1,9 +1,14 @@
 import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
-import { NavigationItemPropType } from '../propTypes';
 import useUniqueId from '../useUniqueId';
+import { EditingNavigationItem } from '../EditingNavigationItemContext';
 
-function SectionForm({ navigationItem, onChange, onSubmit }) {
+export type SectionFormProps = {
+  navigationItem: EditingNavigationItem;
+  onChange: React.Dispatch<EditingNavigationItem>;
+  onSubmit: () => void;
+};
+
+function SectionForm({ navigationItem, onChange, onSubmit }: SectionFormProps): JSX.Element {
   const formSubmitted = useCallback(
     (event) => {
       event.preventDefault();
@@ -36,11 +41,5 @@ function SectionForm({ navigationItem, onChange, onSubmit }) {
     </form>
   );
 }
-
-SectionForm.propTypes = {
-  navigationItem: NavigationItemPropType.isRequired,
-  onChange: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-};
 
 export default SectionForm;

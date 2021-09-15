@@ -1,21 +1,26 @@
+/* global module */
+
 module.exports = {
-  parser: "babel-eslint",
-  extends: ["airbnb", "airbnb-typescript", "prettier"],
-  plugins: ["react", "react-hooks", "@typescript-eslint"],
-  parser: "@typescript-eslint/parser",
-  parserOptions: {
-    sourceType: "module",
-    ecmaVersion: 6,
-    ecmaFeatures: {
-      jsx: true,
-    },
-    project: "./tsconfig.json",
-  },
   env: {
     browser: true,
+    es2021: true,
   },
-  rules: {
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint'],
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react/recommended',
+    'plugin:react/jsx-runtime',
+    'plugin:react-hooks/recommended',
+  ],
+  parserOptions: {
+    ecmaVersion: 12,
+    sourceType: 'module',
+  },
+  settings: {
+    react: {
+      version: 'detect',
+    },
   },
 };
