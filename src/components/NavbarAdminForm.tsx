@@ -1,6 +1,6 @@
 import { useContext, useRef, useState, useEffect } from 'react';
 import HTML5toTouch from 'react-dnd-multi-backend/dist/esm/HTML5toTouch';
-import { DndProvider, Preview } from 'react-dnd-multi-backend';
+import { DndProvider, Preview, PreviewGenerator } from 'react-dnd-multi-backend';
 
 import AddButton from './AddButton';
 import ClientContext from '../ClientContext';
@@ -9,14 +9,6 @@ import { useNavigationItemEditing } from '../EditingNavigationItemContext';
 import NavigationItemList from './NavigationItemList';
 import NavigationItemEditorModal from './NavigationItemEditorModal';
 import PreviewNavigationBar from './PreviewNavigationBar';
-import { CSSProperties } from 'hoist-non-react-statics/node_modules/@types/react';
-import { NavigationItem } from '../NavigationItem';
-
-type NavigationDragItem = {
-  type: string;
-  item: NavigationItem;
-  style: Partial<CSSProperties>;
-};
 
 export default function NavbarAdminForm(): JSX.Element {
   const client = useContext(ClientContext);
@@ -28,9 +20,10 @@ export default function NavbarAdminForm(): JSX.Element {
     client.addErrorSubscriber((err) => setError(err));
   }, [client]);
 
-  const generatePreview = ({ type, item, style }: NavigationDragItem) => {
-    if (type === 'NAVIGATION_ITEM') {
+  const generatePreview: PreviewGenerator = ({ itemType, item, style }) => {
+    if (itemType === 'NAVIGATION_ITEM') {
       return (
+        // @ts-expect-error I honestly don't understand what's happening here with the style prop, but it's fighting with itself
         <div style={{ ...style, width: `${wrapperDivRef.current?.offsetWidth}px` }}>
           <NavigationItemDisplay navigationItem={item} />
         </div>

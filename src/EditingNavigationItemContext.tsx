@@ -3,7 +3,9 @@ import DataContext from './DataContext';
 import { NavigationItem } from './NavigationItem';
 
 export type EditingNavigationItem = Omit<NavigationItem, 'id' | 'position'> &
-  Pick<Partial<NavigationItem>, 'id'>;
+  Pick<Partial<NavigationItem>, 'id'> & {
+    type: 'link' | 'section';
+  };
 
 export type EditingNavigationItemContextValue = {
   navigationItem?: EditingNavigationItem;
@@ -19,19 +21,26 @@ export type EditingNavigationItemContextValue = {
 const EditingNavigationItemContext = React.createContext<EditingNavigationItemContextValue>({
   navigationItem: undefined,
   save: async () => ({ id: '', position: 0, type: 'link', title: '' }),
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   cancel: () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   startEditing: () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   navigationItemChanged: () => {},
 });
 
 export default EditingNavigationItemContext;
 
-export function useNavigationItemEditing() {
+export function useNavigationItemEditing(): {
+  editNavigationItem: (navigationItem: EditingNavigationItem) => void;
+  newNavigationLink: (navigationSectionId: string | undefined) => void;
+  newNavigationSection: () => void;
+} {
   const { navigationItemStore, setNavigationItemStore } = useContext(DataContext);
   const { startEditing } = useContext(EditingNavigationItemContext);
 
   const editNavigationItem = useCallback(
-    (navigationItem: NavigationItem) => {
+    (navigationItem: EditingNavigationItem) => {
       startEditing(navigationItem, (newItem) => {
         setNavigationItemStore(navigationItemStore.update(newItem.id, () => newItem));
       });

@@ -61,7 +61,7 @@
     "webpack-dev-server": "^4.2.1"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
+    "react": "^17.0.0"
   },
   "dependencies": {
     "classnames": "^2.3.1",

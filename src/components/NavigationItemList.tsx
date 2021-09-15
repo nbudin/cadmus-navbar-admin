@@ -3,7 +3,7 @@ import DataContext from '../DataContext';
 import NavigationItemDisplay from './NavigationItemDisplay';
 
 export type NavigationItemListProps = {
-  navigationSectionId: string | undefined;
+  navigationSectionId?: string;
 };
 
 function NavigationItemList({ navigationSectionId }: NavigationItemListProps): JSX.Element {

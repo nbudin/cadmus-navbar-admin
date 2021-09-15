@@ -59,6 +59,10 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
     modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+    alias: {
+      'react/jsx-dev-runtime': 'react/jsx-dev-runtime.js',
+      'react/jsx-runtime': 'react/jsx-runtime.js',
+    },
   },
 
   externals: getExternals(),

@@ -6,7 +6,7 @@ import itemType from '../itemType';
 import AddButton from './AddButton';
 import { useNavigationItemEditing } from '../EditingNavigationItemContext';
 import NavigationItemList from './NavigationItemList';
-import { NavigationItem, NavigationItemPropType } from '../NavigationItem';
+import { NavigationItem } from '../NavigationItem';
 import SectionDisclosureTriangle from './SectionDisclosureTriangle';
 import ClientContext from '../ClientContext';
 import DataContext from '../DataContext';
@@ -218,9 +218,5 @@ function NavigationItemDisplay({ navigationItem }: NavigationItemDisplayProps): 
     </li>
   );
 }
-
-NavigationItemDisplay.NavigationItem = {
-  navigationItem: NavigationItemPropType.isRequired,
-};
 
 export default NavigationItemDisplay;

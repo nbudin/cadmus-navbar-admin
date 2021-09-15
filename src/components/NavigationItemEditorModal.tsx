@@ -29,11 +29,9 @@ function NavigationItemEditorModal(): JSX.Element {
   }, [navigationItem]);
 
   const renderTitle = () => {
-    const navigationItemType = itemType(navigationItem);
-
-    if (navigationItemType === 'Link') {
+    if (navigationItem?.type === 'link') {
       return 'Link properties';
-    } else if (navigationItemType === 'Section') {
+    } else if (navigationItem?.type === 'section') {
       return 'Section properties';
     }
 
@@ -41,9 +39,7 @@ function NavigationItemEditorModal(): JSX.Element {
   };
 
   const renderForm = () => {
-    const navigationItemType = itemType(navigationItem);
-
-    if (navigationItem && navigationItemType === 'Link') {
+    if (navigationItem?.type === 'link') {
       return (
         <LinkForm
           navigationItem={navigationItem}
@@ -51,7 +47,7 @@ function NavigationItemEditorModal(): JSX.Element {
           onChange={navigationItemChanged}
         />
       );
-    } else if (navigationItem && navigationItemType === 'Section') {
+    } else if (navigationItem?.type === 'section') {
       return (
         <SectionForm
           navigationItem={navigationItem}
