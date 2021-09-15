@@ -3,7 +3,7 @@ import DataContext from './DataContext';
 import { NavigationItem } from './NavigationItem';
 
 export type EditingNavigationItem = Omit<NavigationItem, 'id' | 'position'> &
-  Pick<Partial<NavigationItem>, 'id'> & {
+  Pick<Partial<NavigationItem>, 'id' | 'position'> & {
     type: 'link' | 'section';
   };
 
