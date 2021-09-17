@@ -461,6 +461,53 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dnd-kit/accessibility@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@dnd-kit/accessibility@npm:3.0.0"
+  dependencies:
+    tslib: ^2.0.0
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: feac6afea07ece1568df38973d7a1a1b994782a6df119983250c3849ca2a3818a7bcc67fe4c5d22b0a1cfde866081644d677d2188abed507b3eccc255da79320
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/core@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "@dnd-kit/core@npm:3.1.1"
+  dependencies:
+    "@dnd-kit/accessibility": ^3.0.0
+    "@dnd-kit/utilities": ^2.0.0
+    tslib: ^2.0.0
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: e52a49ad1e831644544da0e4a0e2e44621f9bb55754f9498ea5bc915ec6b5c46108444e7d67592f94c517618ef53b569f11ad1846798db31fcdee56a57685334
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/sortable@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@dnd-kit/sortable@npm:4.0.0"
+  dependencies:
+    "@dnd-kit/utilities": ^2.0.0
+    tslib: ^2.0.0
+  peerDependencies:
+    "@dnd-kit/core": ^3.1.0
+    react: ">=16.8.0"
+  checksum: c2c23a1ed4528e8b05901891a1852458d8b201d0fc0848750630f705f8547869078f08f2ac9026e7aede3464a52c6c4dcbc9e6b0e1bcd0c652c77f98f592d8ab
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/utilities@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@dnd-kit/utilities@npm:2.0.0"
+  dependencies:
+    tslib: ^2.0.0
+  checksum: 10173fc8d6fa8e46394ac2b739e443a3254e31854cbdbe810782bb7b6f4b4dd948752c3114479827c0da757e6616dd44a70394b6e8524d807514db0be192b18d
+  languageName: node
+  linkType: hard
+
 "@eslint/eslintrc@npm:^0.4.3":
   version: 0.4.3
   resolution: "@eslint/eslintrc@npm:0.4.3"
@@ -2638,6 +2685,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bootstrap-icons@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "bootstrap-icons@npm:1.5.0"
+  checksum: d36851ad6bf315d20589a7a7f4b513f867a4c55d85ac6881644c0261be56185307cde3f1968f326922a7a925c65897543ca9889ab3054e3a0e4a98005fcb7f4a
+  languageName: node
+  linkType: hard
+
 "brace-expansion@npm:^1.1.7":
   version: 1.1.11
   resolution: "brace-expansion@npm:1.1.11"
@@ -2816,6 +2870,9 @@ __metadata:
     "@babel/core": ^7.15.5
     "@babel/preset-react": ^7.14.5
     "@babel/preset-typescript": ^7.15.0
+    "@dnd-kit/core": ^3.1.1
+    "@dnd-kit/sortable": ^4.0.0
+    "@dnd-kit/utilities": ^2.0.0
     "@types/babel__core": ^7.1.16
     "@types/lodash": ^4.14.172
     "@types/prettier": ^2.3.2
@@ -2824,6 +2881,7 @@ __metadata:
     "@typescript-eslint/parser": ^4.31.1
     babel-eslint: ^10.1.0
     babel-loader: ^8.2.2
+    bootstrap-icons: ^1.5.0
     classnames: ^2.3.1
     compression-webpack-plugin: ^9.0.0
     core-js: ^3.17.3
@@ -9282,6 +9340,13 @@ resolve@^2.0.0-next.3:
   version: 1.11.0
   resolution: "tslib@npm:1.11.0"
   checksum: f0b5533697792def77fbc1bc9d2669321264ebcedff471f3d679957e9de8a4b5404072d7deae8ba9f836aba6ca828f182282663e0e15ec979e80378710a22e11
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.0.0":
+  version: 2.3.1
+  resolution: "tslib@npm:2.3.1"
+  checksum: de17a98d4614481f7fcb5cd53ffc1aaf8654313be0291e1bfaee4b4bb31a20494b7d218ff2e15017883e8ea9626599b3b0e0229c18383ba9dce89da2adf15cb9
   languageName: node
   linkType: hard
 

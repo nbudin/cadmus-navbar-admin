@@ -51,9 +51,27 @@ export default class NavigationItemStore {
     );
   }
 
+  getFlattenedItems(includeCollapsedChildren = false): NavigationItem[] {
+    const flattenList = (items: NavigationItem[]): NavigationItem[] => {
+      return items.reduce(
+        (acc, item) => [
+          ...acc,
+          item,
+          ...(includeCollapsedChildren || item.expanded
+            ? flattenList(this.getNavigationItemsInSection(item.id))
+            : []),
+        ],
+        [],
+      );
+    };
+
+    return flattenList(this.getRoots());
+  }
+
   map<U>(
     ...args: [
       callbackfn: (value: NavigationItem, index: number, array: NavigationItem[]) => U,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       thisArg?: any,
     ]
   ): U[] {
@@ -80,22 +98,15 @@ export default class NavigationItemStore {
   reposition(
     id: string,
     newNavigationSectionId: string | undefined,
-    newPosition: number,
+    newIndex: number,
   ): NavigationItemStore {
     const item = this.get(id);
     const itemsInSection = this.getNavigationItemsInSection(newNavigationSectionId).filter(
       (sectionItem) => sectionItem.id !== item.id,
     );
 
-    let insertIndex = itemsInSection.findIndex(
-      (sectionItem) => sectionItem.position >= newPosition,
-    );
-    if (insertIndex === -1) {
-      insertIndex = itemsInSection.length;
-    }
-
     const newItems = [...itemsInSection];
-    newItems.splice(insertIndex, 0, {
+    newItems.splice(newIndex, 0, {
       ...item,
       navigation_section_id: newNavigationSectionId,
     });
@@ -106,22 +117,6 @@ export default class NavigationItemStore {
     return new NavigationItemStore(
       newItemsWithPositions.reduce(
         (acc, newItem) => ({ ...acc, [newItem.id]: newItem }),
-        this.navigationItems,
-      ),
-    );
-  }
-
-  applySort(newNavigationItems: NavigationItemStore): NavigationItemStore {
-    return new NavigationItemStore(
-      Object.values(newNavigationItems.navigationItems).reduce(
-        (result, newNavigationItem) => ({
-          ...result,
-          [newNavigationItem.id]: {
-            ...result[newNavigationItem.id],
-            position: newNavigationItem.position,
-            navigation_section_id: newNavigationItem.navigation_section_id,
-          },
-        }),
         this.navigationItems,
       ),
     );

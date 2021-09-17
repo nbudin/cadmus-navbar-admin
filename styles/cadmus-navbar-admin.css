@@ -3,13 +3,12 @@
   cursor: -moz-grab;
   cursor: -webkit-grab;
   cursor: grab;
+  touch-action: none;
 }
 
-.draggable.dragging {
+.dragging {
   cursor: move;
   cursor: -moz-grabbing;
   cursor: -webkit-grabbing;
   cursor: grabbing;
-
-  opacity: 0;
 }

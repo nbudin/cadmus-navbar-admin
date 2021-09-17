@@ -23,9 +23,9 @@ function SectionDisclosureTriangle({
 
   let disclosureTriangle;
   if (navigationSection.expanded) {
-    disclosureTriangle = '▼';
+    disclosureTriangle = <i className="bi-caret-down-fill" />;
   } else {
-    disclosureTriangle = '►';
+    disclosureTriangle = <i className="bi-caret-right-fill" />;
   }
 
   return (

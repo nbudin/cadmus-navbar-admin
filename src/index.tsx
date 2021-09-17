@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import ClientContext from './ClientContext';
-import DataContext, { DataContextValue, Page } from './DataContext';
+import { Page } from './DataContext';
 import EditingNavigationItemContext, {
   EditingNavigationItem,
   EditingNavigationItemContextValue,
@@ -10,37 +10,8 @@ import NavigationItemStore from './NavigationItemStore';
 import { CadmusNavbarAdminClient } from './CadmusNavbarAdminClient';
 import { NavigationItem } from './NavigationItem';
 
-function useDataContextValue(client: CadmusNavbarAdminClient): DataContextValue {
-  const [navigationItemStore, setNavigationItemStore] = useState(new NavigationItemStore([]));
-  const [pages, setPages] = useState<Page[]>([]);
-  const [loadError, setLoadError] = useState<Error>();
-
-  useEffect(() => {
-    client
-      .fetchNavigationItems()
-      .then((data) => {
-        setNavigationItemStore(new NavigationItemStore(data));
-      })
-      .catch((err) => {
-        setLoadError(err);
-      });
-
-    client
-      .fetchPages()
-      .then((data) => {
-        setPages(data);
-      })
-      .catch((err) => {
-        setLoadError(err);
-      });
-  }, [client]);
-
-  const contextValue: DataContextValue = useMemo(
-    () => ({ navigationItemStore, pages, loadError, setNavigationItemStore }),
-    [navigationItemStore, pages, loadError, setNavigationItemStore],
-  );
-
-  return contextValue;
+async function fetchInitialClientData(client: CadmusNavbarAdminClient) {
+  return Promise.all([client.fetchNavigationItems(), client.fetchPages()]);
 }
 
 function useEditingNavigationItemContextValue(
@@ -93,16 +64,38 @@ export type CadmusNavbarAdminAppProps = {
 };
 
 export default function CadmusNavbarAdminApp({ client }: CadmusNavbarAdminAppProps): JSX.Element {
-  const dataContextValue = useDataContextValue(client);
+  const [initialNaviationItemStore, setInitialNavigationItemStore] =
+    useState<NavigationItemStore>();
+  const [initialPages, setInitialPages] = useState<Page[]>();
+  const [fetchError, setFetchError] = useState<Error>();
+
+  useEffect(() => {
+    fetchInitialClientData(client)
+      .then(([navigationItems, pages]) => {
+        setInitialNavigationItemStore(new NavigationItemStore(navigationItems));
+        setInitialPages(pages);
+      })
+      .catch((error) => setFetchError(error));
+  }, [client]);
+
   const editingNavigationItemContextValue = useEditingNavigationItemContextValue(client);
+
+  if (fetchError) {
+    return <div className="alert alert-danger">{fetchError.message}</div>;
+  }
+
+  if (!initialNaviationItemStore || !initialPages) {
+    return <>Loading...</>;
+  }
 
   return (
     <ClientContext.Provider value={client}>
-      <DataContext.Provider value={dataContextValue}>
-        <EditingNavigationItemContext.Provider value={editingNavigationItemContextValue}>
-          <NavbarAdminForm />
-        </EditingNavigationItemContext.Provider>
-      </DataContext.Provider>
+      <EditingNavigationItemContext.Provider value={editingNavigationItemContextValue}>
+        <NavbarAdminForm
+          initialNavigationItemStore={initialNaviationItemStore}
+          pages={initialPages}
+        />
+      </EditingNavigationItemContext.Provider>
     </ClientContext.Provider>
   );
 }

@@ -9,14 +9,13 @@ export type Page = {
 export type DataContextValue = {
   navigationItemStore: NavigationItemStore;
   setNavigationItemStore: React.Dispatch<NavigationItemStore>;
-  loadError?: Error;
   pages: Page[];
 };
 
 const DataContext = React.createContext<DataContextValue>({
   navigationItemStore: new NavigationItemStore([]),
   pages: [],
-  loadError: undefined,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setNavigationItemStore: () => {},
 });
 

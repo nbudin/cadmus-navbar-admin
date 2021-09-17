@@ -77,7 +77,6 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        include: [path.resolve(__dirname, 'styles')],
         use: ['style-loader', 'css-loader'],
       },
     ],

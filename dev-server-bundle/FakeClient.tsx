@@ -71,6 +71,7 @@ export default class FakeClient implements CadmusNavbarAdminClient {
         ...navigationItem,
       };
       this.navigationItems.splice(existingItemIndex, 1, fullItem);
+      console.log(`Updated existing navigation item ${existingItem.title}`);
       return fullItem;
     }
 
@@ -80,14 +81,21 @@ export default class FakeClient implements CadmusNavbarAdminClient {
       position: this.navigationItems.length,
     };
     this.navigationItems.push(navigationItemWithId);
+    console.log(`Added navigation item ${navigationItemWithId.title}`);
     return navigationItemWithId;
   }
 
   async deleteNavigationItem(navigationItem: NavigationItem): Promise<void> {
     this.navigationItems = this.navigationItems.filter((item) => item.id !== navigationItem.id);
+    console.log(`Deleted navigation item ${navigationItem.title}`);
   }
 
   async sortNavigationItems(navigationItems: NavigationItemStore): Promise<void> {
     this.navigationItems = navigationItems.map((item: NavigationItem) => item);
+    console.log(
+      `Sorted navigation items; new order is ${JSON.stringify(
+        this.navigationItems.map((item) => item.title),
+      )}`,
+    );
   }
 }

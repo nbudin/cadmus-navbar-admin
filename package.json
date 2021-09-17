@@ -35,6 +35,7 @@
     "@typescript-eslint/parser": "^4.31.1",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
+    "bootstrap-icons": "^1.5.0",
     "compression-webpack-plugin": "^9.0.0",
     "core-js": "^3.17.3",
     "css-loader": "^6.2.0",
@@ -62,13 +63,11 @@
     "react": "^17.0.0"
   },
   "dependencies": {
+    "@dnd-kit/core": "^3.1.1",
+    "@dnd-kit/sortable": "^4.0.0",
+    "@dnd-kit/utilities": "^2.0.0",
     "classnames": "^2.3.1",
     "lodash": "^4.17.21",
-    "react-bootstrap4-modal": "^2.0.0",
-    "react-dnd": "^14.0.3",
-    "react-dnd-html5-backend": "^14.0.1",
-    "react-dnd-multi-backend": "^7.0.0-alpha.4",
-    "react-dnd-preview": "^7.0.0-alpha.3",
-    "react-dnd-touch-backend": "^14.1.0"
+    "react-bootstrap4-modal": "^2.0.0"
   }
 }
