@@ -163,7 +163,7 @@ export default function NavbarAdminForm({
               {flattenedItems.map((navigationItem) => (
                 <div
                   key={navigationItem.id}
-                  className={navigationItem.navigation_section_id ? 'ml-4' : undefined}
+                  className={navigationItem.navigation_section_id ? 'ms-4' : undefined}
                 >
                   <NavigationItemDisplay
                     navigationItem={navigationItem}
