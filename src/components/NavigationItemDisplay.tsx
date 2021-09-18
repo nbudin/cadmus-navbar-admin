@@ -85,7 +85,7 @@ function NavigationItemDisplay({
       <div className="col text-right">
         {itemType(navigationItem) === 'Section' && (
           <>
-            <AddButton onClick={() => newNavigationLink(navigationItem.id)}>Add link</AddButton>
+            <AddButton onClick={() => newNavigationLink(navigationItem.id)}>Add link</AddButton>{' '}
           </>
         )}
         <button
