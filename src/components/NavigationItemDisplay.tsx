@@ -8,6 +8,7 @@ import ClientContext from '../ClientContext';
 import DataContext from '../DataContext';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import AddButton from './AddButton';
 
 export type NavigationItemDisplayProps = {
   navigationItem: NavigationItem;
@@ -82,6 +83,11 @@ function NavigationItemDisplay({
         <strong>{itemType(navigationItem)}:</strong> {navigationItem.title}
       </div>
       <div className="col text-right">
+        {itemType(navigationItem) === 'Section' && (
+          <>
+            <AddButton onClick={() => newNavigationLink(navigationItem.id)}>Add link</AddButton>
+          </>
+        )}
         <button
           type="button"
           className="btn btn-secondary btn-sm"
