@@ -53,9 +53,6 @@ function NavigationItemDisplay({
       type: navigationItem.page_id == null ? 'section' : 'link',
     });
   };
-  const newLinkClicked = () => {
-    newNavigationLink(navigationItem.id);
-  };
 
   const renderDisclosureTriangle = () => {
     if (itemType(navigationItem) !== 'Section') {

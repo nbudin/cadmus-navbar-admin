@@ -28,6 +28,21 @@ import NavigationItemDragOverlayDisplay from './NavigationItemDragOverlayDisplay
 import NavigationItemStore from '../NavigationItemStore';
 import NavigationItemDisplay from './NavigationItemDisplay';
 
+function RootLevelAddButtons(): JSX.Element {
+  const { newNavigationLink, newNavigationSection } = useNavigationItemEditing();
+
+  return (
+    <ul className="list-inline mt-2">
+      <li className="list-inline-item">
+        <AddButton onClick={newNavigationSection}>Add section</AddButton>
+      </li>
+      <li className="list-inline-item">
+        <AddButton onClick={() => newNavigationLink(undefined)}>Add link</AddButton>
+      </li>
+    </ul>
+  );
+}
+
 export type NavbarAdminFormProps = {
   pages: Page[];
   initialNavigationItemStore: NavigationItemStore;
@@ -52,7 +67,6 @@ export default function NavbarAdminForm({
   const [activeDragItemId, setActiveDragItemId] = useState<string>();
   const [dragWorkingStore, setDragWorkingStore] = useState<NavigationItemStore>(canonicalStore);
   const client = useContext(ClientContext);
-  const { newNavigationLink, newNavigationSection } = useNavigationItemEditing();
   const [error, setError] = useState<Error>();
 
   const dataContextValue: DataContextValue = useMemo(
@@ -174,15 +188,7 @@ export default function NavbarAdminForm({
             </SortableContext>
           </ul>
 
-          <ul className="list-inline mt-2">
-            <li className="list-inline-item">
-              <AddButton onClick={newNavigationSection}>Add section</AddButton>
-            </li>
-            <li className="list-inline-item">
-              <AddButton onClick={() => newNavigationLink(undefined)}>Add link</AddButton>
-            </li>
-          </ul>
-
+          <RootLevelAddButtons />
           <NavigationItemEditorModal />
         </div>
         <DragOverlay>
