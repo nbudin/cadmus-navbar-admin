@@ -63,9 +63,9 @@
     "react": "^17.0.0"
   },
   "dependencies": {
-    "@dnd-kit/core": "^3.1.1",
-    "@dnd-kit/sortable": "^4.0.0",
-    "@dnd-kit/utilities": "^2.0.0",
+    "@dnd-kit/core": "^4.0.3",
+    "@dnd-kit/sortable": "^5.1.0",
+    "@dnd-kit/utilities": "^3.0.2",
     "classnames": "^2.3.1",
     "lodash": "^4.17.21",
     "react-bootstrap4-modal": "^2.0.0"

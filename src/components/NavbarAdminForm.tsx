@@ -6,7 +6,8 @@ import {
   DragOverlay,
   DragStartEvent,
   KeyboardSensor,
-  LayoutMeasuringStrategy,
+  MeasuringConfiguration,
+  MeasuringStrategy,
   PointerSensor,
   useSensor,
   useSensors,
@@ -55,8 +56,10 @@ const VIRTUAL_ROOT_SECTION: NavigationItem = {
   expanded: true,
 };
 
-const layoutMeasuring = {
-  strategy: LayoutMeasuringStrategy.Always,
+const measuringConfiguration: MeasuringConfiguration = {
+  droppable: {
+    strategy: MeasuringStrategy.Always,
+  },
 };
 
 export default function NavbarAdminForm({
@@ -162,7 +165,7 @@ export default function NavbarAdminForm({
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}
       onDragCancel={handleDragCancel}
-      layoutMeasuring={layoutMeasuring}
+      measuring={measuringConfiguration}
     >
       <DataContext.Provider value={dataContextValue}>
         <div>
